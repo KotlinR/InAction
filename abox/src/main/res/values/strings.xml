@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">aBoxing</string>
+    <string name="library">Library</string>
+    <string name="generate_workout">Generate workout</string>
+    <string name="start_training">Start training</string>
+    <string name="break_rounds">Break rounds</string>
+    <string name="round_time">Round time</string>
+    <string name="rounds">Rounds</string>
+    <string name="Setting" />
+    <string name="setting" />
+    <string name="boxer_movement_library">Boxer movement library</string>
+    <string name="select_all">Select all</string>
+    <string name="jab">Jab</string>
+    <string name="hook">Hook</string>
+    <string name="cross">Cross</string>
+    <string name="uppercut">Uppercut</string>
+    <string name="turning_aside">Turning Aside</string>
+    <string name="swing">Swing</string>
+    <string name="side_step">Side-Step</string>
+    <string name="swaying_way">Swaying Way</string>
+    <string name="jolt">Jolt</string>
+    <string name="duck">Duck</string>
+    <string name="overhead">Overhead</string>
+    <string name="creating_a_workout">Creating a workout</string>
+    <string name="scroll_created_rounds">scroll_created_rounds</string>
+    <string name="open">Open</string>
+    <string name="save">Save</string>
+    <string name="generate">Generate</string>
+    <string name="clear">Clear</string>
+    <string name="share">Share</string>
+    <string name="all_trainings">All trainings</string>
+    <string-array name="spinnerRounds">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
+    <string-array name="spinnerRoundTime">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="spinnerBreakRounds">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+</resources>
