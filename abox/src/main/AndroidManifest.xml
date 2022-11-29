@@ -10,10 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InAction">
         <activity
-            android:name=".CreateTraining"
+            android:name=".TrainingActivity"
             android:exported="false" />
         <activity
-            android:name=".TrainingsActivity"
+            android:name=".AllTrainingsActivity"
             android:exported="false" />
         <activity
             android:name=".BoxerMovementLibrary"

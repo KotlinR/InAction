@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
         val btnGenerateWorkout = findViewById<Button>(R.id.btnGenerateWorkout)
         btnGenerateWorkout.setOnClickListener {
-            startActivity(Intent(this, TrainingsActivity().javaClass))
+            startActivity(Intent(this, AllTrainingsActivity().javaClass))
         }
     }
 }

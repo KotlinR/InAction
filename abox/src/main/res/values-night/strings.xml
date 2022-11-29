@@ -27,6 +27,10 @@
     <string name="clear">Clear</string>
     <string name="share">Share</string>
     <string name="all_trainings">All trainings</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string-array name="spinnerRounds">
         <item>1</item>
         <item>2</item>

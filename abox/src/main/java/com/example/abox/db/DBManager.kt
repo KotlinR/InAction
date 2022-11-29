@@ -13,12 +13,12 @@ class DBManager(private val context: Context) {
     private val tableTrainings = "trainings"
 
     private val columnID = "_id"
-    private val columnWorkoutTitle = "workout_title"
+    private val columnTrainingTitle = "workout_title"
     private val columnExercises = "exercises"
 
     private val createDBTrainingCommand = "create table " + tableTrainings + "(" +
             columnID + " integer primary key autoincrement, " +
-            columnWorkoutTitle + " text, " +
+            columnTrainingTitle + " text, " +
             columnExercises + " text" +
             ");"
 
@@ -40,14 +40,14 @@ class DBManager(private val context: Context) {
 
     fun saveTraining(training: Training) {
         val cv = ContentValues()
-        cv.put(columnWorkoutTitle, training.title)
+        cv.put(columnTrainingTitle, training.title)
         cv.put(columnExercises, training.exercises.joinToString(separator = "|"))
         mDB?.insert(tableTrainings, null, cv)
     }
 
     fun updateTraining(training: Training) {
         val cv = ContentValues()
-        cv.put(columnWorkoutTitle, training.title)
+        cv.put(columnTrainingTitle, training.title)
         cv.put(columnExercises, training.exercises.joinToString(separator = "|"))
         mDB?.update(tableTrainings, cv, "$columnID = ${training.id}", null)
     }
