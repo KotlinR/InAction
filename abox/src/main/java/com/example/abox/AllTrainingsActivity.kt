@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.abox.ABoxApplication.Companion.dbManager
 import com.example.abox.adapter.TrainingsRecyclerAdapter
 import com.example.abox.db.DBManager
 import com.example.abox.db.entities.Training
@@ -21,16 +22,15 @@ class AllTrainingsActivity : AppCompatActivity() {
         const val DELETE_ALL_ID = 2
     }
 
-    private var db: DBManager? = null
+    private val db: DBManager
+        get() = dbManager()
+
     private var recyclerView: RecyclerView? = null
     private var adapter: TrainingsRecyclerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.all_trainings_activity)
-
-        db = DBManager(this)
-        db?.open()
 
         val allTrainings = fetchTrainings()
 
@@ -55,11 +55,6 @@ class AllTrainingsActivity : AppCompatActivity() {
         adapter?.updateTrainings(allTrainings)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        db?.close()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menu?.add(0, SETTINGS_ID, 0, "Setting")
         menu?.add(0, DELETE_ALL_ID, 0, "Delete all")
@@ -71,8 +66,8 @@ class AllTrainingsActivity : AppCompatActivity() {
             SETTINGS_ID -> {
             }
             DELETE_ALL_ID -> {
-                if (db?.getAllTrainings()?.count != 0) {
-                    db?.deleteAllTrainings()
+                if (db.getAllTrainings()?.count != 0) {
+                    db.deleteAllTrainings()
                 }
             }
         }
@@ -103,11 +98,11 @@ class AllTrainingsActivity : AppCompatActivity() {
     }
 
     private fun deleteTraining(training: Training) {
-        db?.deleteTraining(training)
+        db.deleteTraining(training)
     }
 
     private fun fetchTrainings(): List<Training> {
-        val cursor = db?.getAllTrainings()
+        val cursor = db.getAllTrainings()
         startManagingCursor(cursor)
         return createTrainingsList(cursor)
     }

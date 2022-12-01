@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.abox.ABoxApplication.Companion.dbManager
 import com.example.abox.adapter.RoundsRecycleAdapter
 import com.example.abox.db.DBManager
 import com.example.abox.db.entities.Training
@@ -33,7 +34,8 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         const val CLOSE_ACTIVITY_DIALOG_TYPE = "close_activity_dialog_type"
     }
 
-    private var db: DBManager? = null
+    private val db: DBManager
+        get() = dbManager()
 
     private var recycleView: RecyclerView? = null
     private var adapter: RoundsRecycleAdapter? = null
@@ -248,16 +250,13 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
     }
 
     private fun saveTraining() {
-        db = DBManager(this).apply {
-            open()
-            saveTraining(
-                Training(
-                    id = "",
-                    title = trainingTitle?.text.toString(),
-                    exercises = exercises
-                )
+        db.saveTraining(
+            Training(
+                id = "",
+                title = trainingTitle?.text.toString(),
+                exercises = exercises
             )
-        }
+        )
         Toast.makeText(this, "Training saved", Toast.LENGTH_SHORT).show()
         finish()
     }
@@ -268,21 +267,15 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
             title = trainingTitle?.text.toString(),
             exercises = exercises
         )
-        db = DBManager(this).apply {
-            open()
-            updateTraining(updatedTraining)
-        }
+        db.updateTraining(updatedTraining)
         originTraining = updatedTraining
         Toast.makeText(this, "Changes saved", Toast.LENGTH_SHORT).show()
     }
 
     private fun deleteTraining() {
         if (originTraining?.id != null) {
-            db = DBManager(this).apply {
-                open()
-                originTraining?.let {
-                    deleteTraining(it)
-                }
+            originTraining?.let {
+                db.deleteTraining(it)
             }
             Toast.makeText(this, "Training deleted", Toast.LENGTH_SHORT).show()
             finish()
