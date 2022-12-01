@@ -38,21 +38,21 @@
             android:layout_weight="1"
             android:text="@string/ok" />
 
-<!--        <Button-->
-<!--            android:id="@+id/btnNegativeEnterText"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text="@string/no" />-->
+        <Button
+            android:id="@+id/btnNegativeEnterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:text="@string/no" />
 
-<!--        <Button-->
-<!--            android:id="@+id/btnNeutralEnterText"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text="@string/cancel" />-->
+        <Button
+            android:id="@+id/btnNeutralEnterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

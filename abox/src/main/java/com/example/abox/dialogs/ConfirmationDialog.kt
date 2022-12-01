@@ -1,7 +1,6 @@
 package com.example.abox.dialogs
 
 import android.annotation.SuppressLint
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,27 +19,21 @@ class ConfirmationDialog : DialogFragment() {
         private const val KEY_NO = "noBtn"
         private const val KEY_CANCEL = "cancel"
         private const val KEY_TITLE = "title"
-        private const val KEY_TYPE = "type"
-        private const val KEY_INDEX = "index"
 
         fun newInstance(
             message: String,
-            yesBtn: String,
-            noBtn: String?,
-            cancelBtn: String,
+            positiveBtn: String?,
+            negativeBtn: String?,
+            neutralBtn: String?,
             title: String,
-            type: String,
-            index: Int?,
         ): ConfirmationDialog {
             val dialog = ConfirmationDialog()
             dialog.arguments = bundleOf(
                 KEY_MESSAGE to message,
-                KEY_YES to yesBtn,
-                KEY_NO to noBtn,
-                KEY_CANCEL to cancelBtn,
+                KEY_YES to positiveBtn,
+                KEY_NO to negativeBtn,
+                KEY_CANCEL to neutralBtn,
                 KEY_TITLE to title,
-                KEY_TYPE to type,
-                KEY_INDEX to index,
             )
             return dialog
         }
@@ -51,7 +44,6 @@ class ConfirmationDialog : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setStyle(STYLE_NORMAL, R.style.DialogTheme)
     }
 
@@ -68,42 +60,41 @@ class ConfirmationDialog : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         requireDialog().setTitle(arguments?.getString(KEY_TITLE))
-
         view.findViewById<TextView>(R.id.tvConfirmation).text = arguments?.getString(KEY_MESSAGE)
 
+        createButton(
+            id = R.id.posButton,
+            key = KEY_YES,
+            onClick = { interactionListener?.onDialogPositiveClick(this) },
+        )
 
-        view.findViewById<Button>(R.id.posButton).apply {
-            arguments?.getString(KEY_YES)?.let {
+        createButton(
+            id = R.id.negButton,
+            key = KEY_NO,
+            onClick = { interactionListener?.onDialogNegativeClick(this) },
+        )
+
+        createButton(
+            id = R.id.neutralButton,
+            key = KEY_CANCEL,
+            onClick = { interactionListener?.onDialogNeutralClick(this) },
+        )
+    }
+
+    private fun createButton(id: Int, key: String, onClick: () -> Unit) {
+        view?.findViewById<Button>(id)?.apply {
+            arguments?.getString(key)?.let {
                 text = it
                 setOnClickListener {
-                    interactionListener?.onDialogPositiveClick(
-                        dialog = this@ConfirmationDialog,
-                        type = arguments?.getString(KEY_TYPE).toString(),
-                        index = arguments?.getInt(KEY_INDEX),
-                    )
+                    onClick()
                 }
             } ?: run { visibility = View.GONE }
-        }
-        view.findViewById<Button>(R.id.negButton).apply {
-            text = arguments?.getString(KEY_NO)
-            setOnClickListener {
-                interactionListener?.onDialogNegativeClick(
-                    dialog = this@ConfirmationDialog,
-                    type = arguments?.getString(KEY_TYPE).toString(),
-                )
-            }
-        }
-        view.findViewById<Button>(R.id.neutralButton).apply {
-            text = arguments?.getString(KEY_CANCEL)
-            setOnClickListener {
-                interactionListener?.onDialogNeutralClick(this@ConfirmationDialog)
-            }
         }
     }
 
     interface InteractionListener {
-        fun onDialogPositiveClick(dialog: DialogFragment, type: String, index: Int?)
-        fun onDialogNegativeClick(dialog: DialogFragment, type: String)
+        fun onDialogPositiveClick(dialog: DialogFragment)
+        fun onDialogNegativeClick(dialog: DialogFragment)
         fun onDialogNeutralClick(dialog: DialogFragment)
     }
 }

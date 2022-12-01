@@ -123,8 +123,13 @@ class AllTrainingsActivity : AppCompatActivity() {
     }
 
     private fun openTrainingScreen(training: Training?) {
+        val allTitlesTrainings = arrayListOf<String>()
+        fetchTrainings().forEach {
+            allTitlesTrainings.add(it.title)
+        }
         val intent = Intent(this, TrainingActivity::class.java)
         intent.putExtra("training", training)
+        intent.putStringArrayListExtra("allTitleTrainings", allTitlesTrainings)
         startActivity(intent)
     }
 }
