@@ -1,4 +1,4 @@
-package com.example.abox
+package com.sport.abox
 
 import android.content.Intent
 import android.database.Cursor
@@ -9,17 +9,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.abox.adapter.TrainingsRecyclerAdapter
-import com.example.abox.db.DBManager
-import com.example.abox.db.entities.Training
+import com.example.abox.R
+import com.sport.abox.adapter.TrainingsRecyclerAdapter
+import com.sport.abox.db.DBManager
+import com.sport.abox.db.entities.Training
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class AllTrainingsActivity : AppCompatActivity() {
-
-    private companion object {
-        const val SETTINGS_ID = 1
-        const val DELETE_ALL_ID = 2
-    }
 
     private var db: DBManager? = null
     private var recyclerView: RecyclerView? = null
@@ -49,8 +45,8 @@ class AllTrainingsActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onRestart() {
+        super.onRestart()
         val allTrainings = fetchTrainings()
         adapter?.updateTrainings(allTrainings)
     }
@@ -61,16 +57,17 @@ class AllTrainingsActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0, SETTINGS_ID, 0, "Setting")
-        menu?.add(0, DELETE_ALL_ID, 0, "Delete all")
+        menu?.add(0, ItemItMenu.SETTINGS_ID.index, 0, "Setting")
+        menu?.add(0, ItemItMenu.DELETE_ALL_ID.index, 0, "Delete all")
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            SETTINGS_ID -> {
+            ItemItMenu.SETTINGS_ID.index -> {
+                TODO()
             }
-            DELETE_ALL_ID -> {
+            ItemItMenu.DELETE_ALL_ID.index -> {
                 if (db?.getAllTrainings()?.count != 0) {
                     db?.deleteAllTrainings()
                 }

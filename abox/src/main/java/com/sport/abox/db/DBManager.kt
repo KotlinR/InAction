@@ -1,10 +1,10 @@
-package com.example.abox.db
+package com.sport.abox.db
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.example.abox.db.entities.Training
+import com.sport.abox.db.entities.Training
 
 class DBManager(private val context: Context) {
 

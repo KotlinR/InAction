@@ -1,4 +1,4 @@
-package com.example.abox.adapter
+package com.sport.abox.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -53,7 +53,6 @@ class RoundsRecycleAdapter(
             val exerciseOfRound = view.findViewById<TextView>(R.id.tvExerciseOfTraining)
             roundOfTraining.text = "Round [ ${position.plus(1)} ]"
             exerciseOfRound.text = exercise
-
 
             view.setOnLongClickListener {
                 onLongClick(position)

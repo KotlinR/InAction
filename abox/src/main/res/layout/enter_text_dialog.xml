@@ -16,43 +16,47 @@
         android:clickable="true"
         android:text=""
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/llETD"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/llETD"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/btnPositiveEnterText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:text="@string/ok"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnNegativeEnterText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etEnterText"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btnNegativeEnterText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:text="@string/no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnNeutralEnterText"
+        app:layout_constraintStart_toEndOf="@+id/btnPositiveEnterText"
+        app:layout_constraintTop_toBottomOf="@+id/etEnterText"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btnNeutralEnterText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/btnPositiveEnterText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:text="@string/ok" />
-
-        <Button
-            android:id="@+id/btnNegativeEnterText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:text="@string/no" />
-
-        <Button
-            android:id="@+id/btnNeutralEnterText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:text="@string/cancel" />
-    </LinearLayout>
+        app:layout_constraintStart_toEndOf="@+id/btnNegativeEnterText"
+        app:layout_constraintTop_toBottomOf="@+id/etEnterText"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,16 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InAction">
         <activity
-            android:name=".TrainingActivity"
+            android:name="com.sport.abox.TrainingActivity"
             android:exported="false" />
         <activity
-            android:name=".AllTrainingsActivity"
+            android:name="com.sport.abox.AllTrainingsActivity"
             android:exported="false" />
         <activity
-            android:name=".BoxerMovementLibrary"
+            android:name="com.sport.abox.BoxerMovementLibraryActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.sport.abox.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

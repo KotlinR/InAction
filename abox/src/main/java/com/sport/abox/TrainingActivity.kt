@@ -1,4 +1,4 @@
-package com.example.abox
+package com.sport.abox
 
 import android.os.Bundle
 import android.view.Menu
@@ -9,21 +9,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.abox.adapter.RoundsRecycleAdapter
-import com.example.abox.db.DBManager
-import com.example.abox.db.entities.Training
-import com.example.abox.dialogs.ConfirmationDialog
-import com.example.abox.dialogs.EnterTextDialog
+import com.example.abox.R
+import com.sport.abox.adapter.RoundsRecycleAdapter
+import com.sport.abox.db.DBManager
+import com.sport.abox.db.entities.Training
+import com.sport.abox.dialogs.ConfirmationDialog
+import com.sport.abox.dialogs.EnterTextDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionListener,
     EnterTextDialog.InteractionListener {
 
     private companion object {
-        const val SAVE_ID = 1
-        const val DELETE_ALL_ID = 2
-        const val DELETE_TRAINING_ID = 3
-
         const val DELETE_ROUND_DIALOG_TYPE = "delete_dialog_type"
         const val DELETE_TRAINING_DIALOG_TYPE = "delete_training_dialog_type"
         const val UPDATE_TRAINING_DIALOG_TYPE = "update_training_dialog_type"
@@ -132,15 +129,15 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
             "Save training"
         } else "Update training"
 
-        menu?.add(0, SAVE_ID, 0, titleSave)
-        menu?.add(0, DELETE_ALL_ID, 0, "Delete all rounds")
-        menu?.add(0, DELETE_TRAINING_ID, 0, "Delete training from database")
+        menu?.add(0, ItemItMenu.SAVE_ID.index, 0, titleSave)
+        menu?.add(0, ItemItMenu.DELETE_ALL_ID.index, 0, "Delete all rounds")
+        menu?.add(0, ItemItMenu.DELETE_TRAINING_ID.index, 0, "Delete training from database")
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            SAVE_ID -> {
+            ItemItMenu.SAVE_ID.index -> {
                 when {
                     originTraining?.id == null
                             && allTitlesTrainings?.contains(trainingTitle?.text) == false -> {
@@ -168,10 +165,10 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                 }
 
             }
-            DELETE_ALL_ID -> {
+            ItemItMenu.DELETE_ALL_ID.index -> {
                 deleteAllRounds()
             }
-            DELETE_TRAINING_ID -> {
+            ItemItMenu.DELETE_TRAINING_ID.index -> {
                 callConfirmationDialog(
                     message = "The workout will be permanently deleted!",
                     positiveBtn = "Delete",

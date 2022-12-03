@@ -1,4 +1,4 @@
-package com.example.abox.dialogs
+package com.sport.abox.dialogs
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -11,28 +11,28 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.example.abox.R
 
-class EnterTextDialog : DialogFragment() {
+class ConfirmationDialog : DialogFragment() {
 
     companion object {
-        private const val KEY_TEXT = "message"
-        private const val KEY_POS = "yesBtn"
-        private const val KEY_NEG = "noBtn"
-        private const val KEY_NEU = "cancel"
+        private const val KEY_MESSAGE = "message"
+        private const val KEY_YES = "yesBtn"
+        private const val KEY_NO = "noBtn"
+        private const val KEY_CANCEL = "cancel"
         private const val KEY_TITLE = "title"
 
         fun newInstance(
-            text: String,
+            message: String,
             positiveBtn: String?,
             negativeBtn: String?,
             neutralBtn: String?,
             title: String,
-        ): EnterTextDialog {
-            val dialog = EnterTextDialog()
+        ): ConfirmationDialog {
+            val dialog = ConfirmationDialog()
             dialog.arguments = bundleOf(
-                KEY_TEXT to text,
-                KEY_POS to positiveBtn,
-                KEY_NEG to negativeBtn,
-                KEY_NEU to neutralBtn,
+                KEY_MESSAGE to message,
+                KEY_YES to positiveBtn,
+                KEY_NO to negativeBtn,
+                KEY_CANCEL to neutralBtn,
                 KEY_TITLE to title,
             )
             return dialog
@@ -53,38 +53,31 @@ class EnterTextDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.enter_text_dialog, null)
+        return inflater.inflate(R.layout.confirmation_dialog, null)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         requireDialog().setTitle(arguments?.getString(KEY_TITLE))
-
-        val editText = view.findViewById<TextView>(R.id.etEnterText)
-        editText.text = arguments?.getString(KEY_TEXT)
+        view.findViewById<TextView>(R.id.tvConfirmation).text = arguments?.getString(KEY_MESSAGE)
 
         createButton(
-            id = R.id.btnPositiveEnterText,
-            key = KEY_POS,
-            onClick = {
-                interactionListener?.onDialogSetTextClick(
-                    dialog = this@EnterTextDialog,
-                    newText = editText.text.toString(),
-                )
-            }
+            id = R.id.posButton,
+            key = KEY_YES,
+            onClick = { interactionListener?.onDialogPositiveClick(this) },
         )
 
         createButton(
-            id = R.id.btnNegativeEnterText,
-            key = KEY_NEG,
-            onClick = { editText.text = "" }
+            id = R.id.negButton,
+            key = KEY_NO,
+            onClick = { interactionListener?.onDialogNegativeClick(this) },
         )
 
         createButton(
-            id = R.id.btnNeutralEnterText,
-            key = KEY_NEU,
-            onClick = { dismiss() }
+            id = R.id.neutralButton,
+            key = KEY_CANCEL,
+            onClick = { interactionListener?.onDialogNeutralClick(this) },
         )
     }
 
@@ -100,6 +93,8 @@ class EnterTextDialog : DialogFragment() {
     }
 
     interface InteractionListener {
-        fun onDialogSetTextClick(dialog: DialogFragment, newText: String)
+        fun onDialogPositiveClick(dialog: DialogFragment)
+        fun onDialogNegativeClick(dialog: DialogFragment)
+        fun onDialogNeutralClick(dialog: DialogFragment)
     }
 }

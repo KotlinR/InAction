@@ -1,4 +1,4 @@
-package com.example.abox.db.entities
+package com.sport.abox.db.entities
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

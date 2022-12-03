@@ -1,4 +1,4 @@
-package com.example.abox.adapter
+package com.sport.abox.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.abox.R
-import com.example.abox.db.entities.Training
+import com.sport.abox.db.entities.Training
 
 class TrainingsRecyclerAdapter(
     private var trainings: List<Training>,
@@ -20,7 +20,7 @@ class TrainingsRecyclerAdapter(
                 .from(parent.context)
                 .inflate(R.layout.training_title, parent, false),
             onLongClick = onLongClick,
-            onClick = onClick
+            onClick = onClick,
         )
     }
 
