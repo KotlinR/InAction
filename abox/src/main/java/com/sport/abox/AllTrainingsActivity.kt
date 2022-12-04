@@ -9,11 +9,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.abox.R
 import com.sport.abox.adapter.TrainingsRecyclerAdapter
 import com.sport.abox.db.DBManager
 import com.sport.abox.db.entities.Training
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+
+const val KEY_TRAINING = "training"
 
 class AllTrainingsActivity : AppCompatActivity() {
 
@@ -41,7 +42,7 @@ class AllTrainingsActivity : AppCompatActivity() {
         recyclerView?.adapter = adapter
 
         findViewById<FloatingActionButton>(R.id.btnAddTraining).setOnClickListener {
-            openTrainingScreen(null)
+            openTrainingScreen(training = null)
         }
     }
 
@@ -57,17 +58,17 @@ class AllTrainingsActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0, ItemItMenu.SETTINGS_ID.index, 0, "Setting")
-        menu?.add(0, ItemItMenu.DELETE_ALL_ID.index, 0, "Delete all")
+        menu?.add(0, ItemIsMenu.SETTINGS_ID.index, 0, ItemIsMenu.SETTINGS_ID.title)
+        menu?.add(0, ItemIsMenu.DELETE_ALL_ID.index, 0, ItemIsMenu.DELETE_ALL_ID.title)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            ItemItMenu.SETTINGS_ID.index -> {
+            ItemIsMenu.SETTINGS_ID.index -> {
                 TODO()
             }
-            ItemItMenu.DELETE_ALL_ID.index -> {
+            ItemIsMenu.DELETE_ALL_ID.index -> {
                 if (db?.getAllTrainings()?.count != 0) {
                     db?.deleteAllTrainings()
                 }
@@ -125,7 +126,7 @@ class AllTrainingsActivity : AppCompatActivity() {
             allTitlesTrainings.add(it.title)
         }
         val intent = Intent(this, TrainingActivity::class.java)
-        intent.putExtra("training", training)
+        intent.putExtra(KEY_TRAINING, training)
         intent.putStringArrayListExtra("allTitleTrainings", allTitlesTrainings)
         startActivity(intent)
     }

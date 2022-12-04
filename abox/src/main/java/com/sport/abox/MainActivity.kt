@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import com.example.abox.R
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
         val btnLibrary = findViewById<Button>(R.id.btnLibrary)
         btnLibrary.setOnClickListener {
-            startActivity(Intent(this, BoxerMovementLibraryActivity::class.java))
+            Toast.makeText(this, "АСТАНАВИТЕСЬ!", Toast.LENGTH_SHORT).show()
         }
 
         val btnGenerateWorkout = findViewById<Button>(R.id.btnGenerateWorkout)

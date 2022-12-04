@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import com.example.abox.R
+import com.sport.abox.R
 
 class EnterTextDialog : DialogFragment() {
 
@@ -17,7 +17,7 @@ class EnterTextDialog : DialogFragment() {
         private const val KEY_TEXT = "message"
         private const val KEY_POS = "yesBtn"
         private const val KEY_NEG = "noBtn"
-        private const val KEY_NEU = "cancel"
+        private const val KEY_NEUTR = "cancel"
         private const val KEY_TITLE = "title"
 
         fun newInstance(
@@ -32,7 +32,7 @@ class EnterTextDialog : DialogFragment() {
                 KEY_TEXT to text,
                 KEY_POS to positiveBtn,
                 KEY_NEG to negativeBtn,
-                KEY_NEU to neutralBtn,
+                KEY_NEUTR to neutralBtn,
                 KEY_TITLE to title,
             )
             return dialog
@@ -83,7 +83,7 @@ class EnterTextDialog : DialogFragment() {
 
         createButton(
             id = R.id.btnNeutralEnterText,
-            key = KEY_NEU,
+            key = KEY_NEUTR,
             onClick = { dismiss() }
         )
     }

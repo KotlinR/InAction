@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.abox.R
 import com.sport.abox.adapter.RoundsRecycleAdapter
 import com.sport.abox.db.DBManager
 import com.sport.abox.db.entities.Training
@@ -21,13 +20,13 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
     EnterTextDialog.InteractionListener {
 
     private companion object {
-        const val DELETE_ROUND_DIALOG_TYPE = "delete_dialog_type"
-        const val DELETE_TRAINING_DIALOG_TYPE = "delete_training_dialog_type"
-        const val UPDATE_TRAINING_DIALOG_TYPE = "update_training_dialog_type"
-        const val EDIT_TITLE_DIALOG_TYPE = "edit_title_dialog_type"
-        const val EDIT_EXERCISE_DIALOG_TYPE = "edit_exercise_dialog_type"
-        const val CREATE_EXERCISE_DIALOG_TYPE = "create_exercise_dialog_type"
-        const val CLOSE_ACTIVITY_DIALOG_TYPE = "close_activity_dialog_type"
+        const val DELETE_ROUND_DIALOG = "delete_dialog_type"
+        const val DELETE_TRAINING_DIALOG = "delete_training_dialog_type"
+        const val UPDATE_TRAINING_DIALOG = "update_training_dialog_type"
+        const val EDIT_TITLE_DIALOG = "edit_title_dialog_type"
+        const val EDIT_EXERCISE_DIALOG = "edit_exercise_dialog_type"
+        const val CREATE_EXERCISE_DIALOG = "create_exercise_dialog_type"
+        const val CLOSE_ACTIVITY_DIALOG = "close_activity_dialog_type"
     }
 
     private var db: DBManager? = null
@@ -50,7 +49,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         trainingTitle = findViewById(R.id.tvTrainingTitle)
         rounds = findViewById(R.id.tvRounds)
 
-        val training = intent.getParcelableExtra<Training>("training")
+        val training = intent.getParcelableExtra<Training>(KEY_TRAINING)
         allTitlesTrainings = intent.getStringArrayListExtra("allTitleTrainings")
 
         if (training == null) {
@@ -61,7 +60,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                 negativeBtn = "Clear",
                 neutralBtn = null,
                 title = "Training title",
-                tag = EDIT_TITLE_DIALOG_TYPE,
+                tag = EDIT_TITLE_DIALOG,
             )
         } else {
             originTraining = training
@@ -90,7 +89,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                     negativeBtn = "Clear",
                     neutralBtn = "Cancel",
                     title = "Specify exercise",
-                    tag = CREATE_EXERCISE_DIALOG_TYPE,
+                    tag = CREATE_EXERCISE_DIALOG,
                 )
             } else {
                 Toast.makeText(this, "Max 16 rounds", Toast.LENGTH_SHORT).show()
@@ -104,7 +103,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                 negativeBtn = "Clear",
                 neutralBtn = "Cancel",
                 title = "Edit training title",
-                tag = EDIT_TITLE_DIALOG_TYPE,
+                tag = EDIT_TITLE_DIALOG,
             )
         }
     }
@@ -117,7 +116,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                 negativeBtn = "Exit",
                 neutralBtn = "Stay",
                 title = "Close activity without saving?",
-                tag = CLOSE_ACTIVITY_DIALOG_TYPE
+                tag = CLOSE_ACTIVITY_DIALOG
             )
         } else {
             finish()
@@ -125,19 +124,15 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val titleSave = if (originTraining?.id == null) {
-            "Save training"
-        } else "Update training"
-
-        menu?.add(0, ItemItMenu.SAVE_ID.index, 0, titleSave)
-        menu?.add(0, ItemItMenu.DELETE_ALL_ID.index, 0, "Delete all rounds")
-        menu?.add(0, ItemItMenu.DELETE_TRAINING_ID.index, 0, "Delete training from database")
+        menu?.add(0, ItemIsMenu.SAVE_ID.index, 0, ItemIsMenu.SAVE_ID.title)
+        menu?.add(0, ItemIsMenu.DELETE_ALL_ID.index, 0, ItemIsMenu.DELETE_ALL_ID.title)
+        menu?.add(0, ItemIsMenu.DELETE_TRAINING_ID.index, 0, ItemIsMenu.DELETE_TRAINING_ID.title)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            ItemItMenu.SAVE_ID.index -> {
+            ItemIsMenu.SAVE_ID.index -> {
                 when {
                     originTraining?.id == null
                             && allTitlesTrainings?.contains(trainingTitle?.text) == false -> {
@@ -152,7 +147,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                             negativeBtn = null,
                             neutralBtn = "Cancel",
                             title = "Save changes?",
-                            tag = UPDATE_TRAINING_DIALOG_TYPE
+                            tag = UPDATE_TRAINING_DIALOG
                         )
                     }
                     else -> {
@@ -165,17 +160,17 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                 }
 
             }
-            ItemItMenu.DELETE_ALL_ID.index -> {
+            ItemIsMenu.DELETE_ALL_ID.index -> {
                 deleteAllRounds()
             }
-            ItemItMenu.DELETE_TRAINING_ID.index -> {
+            ItemIsMenu.DELETE_TRAINING_ID.index -> {
                 callConfirmationDialog(
                     message = "The workout will be permanently deleted!",
                     positiveBtn = "Delete",
                     negativeBtn = null,
                     neutralBtn = "Cancel",
                     title = "Delete training?",
-                    tag = DELETE_TRAINING_DIALOG_TYPE
+                    tag = DELETE_TRAINING_DIALOG
                 )
             }
         }
@@ -207,7 +202,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
             negativeBtn = "Clear",
             neutralBtn = "Cancel",
             title = "Edit exercise",
-            tag = EDIT_EXERCISE_DIALOG_TYPE,
+            tag = EDIT_EXERCISE_DIALOG,
         )
     }
 
@@ -219,7 +214,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
             negativeBtn = null,
             neutralBtn = "Cancel",
             title = "Delete round?",
-            tag = DELETE_ROUND_DIALOG_TYPE,
+            tag = DELETE_ROUND_DIALOG,
         )
     }
 
@@ -327,15 +322,15 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         newText: String,
     ) {
         when (dialog.tag) {
-            EDIT_TITLE_DIALOG_TYPE -> {
+            EDIT_TITLE_DIALOG -> {
                 createOrEditTrainingTitle(newText)
                 dialog.dismiss()
             }
-            CREATE_EXERCISE_DIALOG_TYPE -> {
+            CREATE_EXERCISE_DIALOG -> {
                 addExercise(newText)
                 dialog.dismiss()
             }
-            EDIT_EXERCISE_DIALOG_TYPE -> {
+            EDIT_EXERCISE_DIALOG -> {
                 editExercise(newText, indexElDialog)
                 dialog.dismiss()
             }
@@ -344,17 +339,17 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         when (dialog.tag) {
-            UPDATE_TRAINING_DIALOG_TYPE -> {
+            UPDATE_TRAINING_DIALOG -> {
                 updateTraining()
                 dialog.dismiss()
             }
-            DELETE_ROUND_DIALOG_TYPE -> {
+            DELETE_ROUND_DIALOG -> {
                 if (indexElDialog != null) {
                     deleteRound(indexElDialog)
                     dialog.dismiss()
                 }
             }
-            DELETE_TRAINING_DIALOG_TYPE -> {
+            DELETE_TRAINING_DIALOG -> {
                 deleteTraining()
                 dialog.dismiss()
             }
@@ -363,7 +358,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
         when (dialog.tag) {
-            CLOSE_ACTIVITY_DIALOG_TYPE -> {
+            CLOSE_ACTIVITY_DIALOG -> {
                 dialog.dismiss()
                 finish()
             }

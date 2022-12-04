@@ -17,8 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_input_add"
-        tools:ignore="MissingConstraints" />
-
+        tools:ignore="ContentDescription,MissingConstraints" />
 
     <Space
         android:id="@+id/sp"

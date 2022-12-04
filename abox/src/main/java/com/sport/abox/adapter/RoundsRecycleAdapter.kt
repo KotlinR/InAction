@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.abox.R
+import com.sport.abox.R
 
 class RoundsRecycleAdapter(
     private val exercises: MutableList<String>,
@@ -51,7 +51,7 @@ class RoundsRecycleAdapter(
         fun onBind(exercise: String, position: Int) {
             val roundOfTraining = view.findViewById<TextView>(R.id.tvRoundOfTraining)
             val exerciseOfRound = view.findViewById<TextView>(R.id.tvExerciseOfTraining)
-            roundOfTraining.text = "Round [ ${position.plus(1)} ]"
+            roundOfTraining.text = "Round [ ${position + 1} ]"
             exerciseOfRound.text = exercise
 
             view.setOnLongClickListener {

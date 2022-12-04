@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import com.example.abox.R
+import com.sport.abox.R
 
 class ConfirmationDialog : DialogFragment() {
 

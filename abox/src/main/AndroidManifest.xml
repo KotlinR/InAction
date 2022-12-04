@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.abox">
+    package="com.sport.abox">
 
     <application
         android:allowBackup="true"
@@ -10,16 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InAction">
         <activity
-            android:name="com.sport.abox.TrainingActivity"
+            android:name=".TrainingActivity"
             android:exported="false" />
         <activity
-            android:name="com.sport.abox.AllTrainingsActivity"
+            android:name=".AllTrainingsActivity"
             android:exported="false" />
         <activity
-            android:name="com.sport.abox.BoxerMovementLibraryActivity"
+            android:name=".BoxerMovementLibraryActivity"
             android:exported="false" />
         <activity
-            android:name="com.sport.abox.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
