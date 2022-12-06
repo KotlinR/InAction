@@ -9,11 +9,11 @@
 
     <TextView
         android:id="@+id/tvWorkoutTitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_weight="5"
-        android:gravity="left"
+        app:layout_constraintHorizontal_weight="5"
+        android:foregroundGravity="right"
         android:text=""
         android:textColor="@color/classic_yellow"
         android:textSize="24sp"
@@ -24,12 +24,11 @@
 
     <TextView
         android:id="@+id/tvRounds"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_weight="1"
+        app:layout_constraintHorizontal_weight="1"
         android:foregroundGravity="right"
-        android:gravity="right"
         android:text=""
         android:textColor="@color/teal_200"
         android:textSize="24sp"

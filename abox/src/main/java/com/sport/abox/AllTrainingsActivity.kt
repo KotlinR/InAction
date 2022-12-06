@@ -18,8 +18,10 @@ const val KEY_TRAINING = "training"
 
 class AllTrainingsActivity : AppCompatActivity() {
 
+    private val fab by lazy { findViewById<FloatingActionButton>(R.id.btnAddTraining) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvAllTrainingsList) }
+
     private var db: DBManager? = null
-    private var recyclerView: RecyclerView? = null
     private var adapter: TrainingsRecyclerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +39,10 @@ class AllTrainingsActivity : AppCompatActivity() {
             onClick = { onTrainingClick(it) },
         )
 
-        recyclerView = findViewById(R.id.rvAllTrainingsList)
         recyclerView?.layoutManager = LinearLayoutManager(this)
         recyclerView?.adapter = adapter
 
-        findViewById<FloatingActionButton>(R.id.btnAddTraining).setOnClickListener {
+        fab.setOnClickListener {
             openTrainingScreen(training = null)
         }
     }
@@ -58,17 +59,17 @@ class AllTrainingsActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0, ItemIsMenu.SETTINGS_ID.index, 0, ItemIsMenu.SETTINGS_ID.title)
-        menu?.add(0, ItemIsMenu.DELETE_ALL_ID.index, 0, ItemIsMenu.DELETE_ALL_ID.title)
+        menu?.add(0, TrainingMenu.SETTINGS_ID.index, 0, TrainingMenu.SETTINGS_ID.title)
+        menu?.add(0, TrainingMenu.DELETE_ALL_ID.index, 0, TrainingMenu.DELETE_ALL_ID.title)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            ItemIsMenu.SETTINGS_ID.index -> {
+            TrainingMenu.SETTINGS_ID.index -> {
                 TODO()
             }
-            ItemIsMenu.DELETE_ALL_ID.index -> {
+            TrainingMenu.DELETE_ALL_ID.index -> {
                 if (db?.getAllTrainings()?.count != 0) {
                     db?.deleteAllTrainings()
                 }
@@ -127,7 +128,6 @@ class AllTrainingsActivity : AppCompatActivity() {
         }
         val intent = Intent(this, TrainingActivity::class.java)
         intent.putExtra(KEY_TRAINING, training)
-        intent.putStringArrayListExtra("allTitleTrainings", allTitlesTrainings)
         startActivity(intent)
     }
 }

@@ -62,33 +62,27 @@ class ConfirmationDialog : DialogFragment() {
         requireDialog().setTitle(arguments?.getString(KEY_TITLE))
         view.findViewById<TextView>(R.id.tvConfirmation).text = arguments?.getString(KEY_MESSAGE)
 
-        createButton(
-            id = R.id.posButton,
-            key = KEY_YES,
-            onClick = { interactionListener?.onDialogPositiveClick(this) },
-        )
-
-        createButton(
-            id = R.id.negButton,
-            key = KEY_NO,
-            onClick = { interactionListener?.onDialogNegativeClick(this) },
-        )
-
-        createButton(
-            id = R.id.neutralButton,
-            key = KEY_CANCEL,
-            onClick = { interactionListener?.onDialogNeutralClick(this) },
-        )
-    }
-
-    private fun createButton(id: Int, key: String, onClick: () -> Unit) {
-        view?.findViewById<Button>(id)?.apply {
-            arguments?.getString(key)?.let {
-                text = it
-                setOnClickListener {
-                    onClick()
-                }
-            } ?: run { visibility = View.GONE }
+        arguments?.let { arguments ->
+            view.apply {
+                setUpButton(
+                    id = R.id.posButton,
+                    key = KEY_YES,
+                    arguments = arguments,
+                    onClick = { interactionListener?.onDialogPositiveClick(this@ConfirmationDialog) },
+                )
+                setUpButton(
+                    id = R.id.negButton,
+                    key = KEY_NO,
+                    arguments = arguments,
+                    onClick = { interactionListener?.onDialogNegativeClick(this@ConfirmationDialog) },
+                )
+                setUpButton(
+                    id = R.id.neutralButton,
+                    key = KEY_CANCEL,
+                    arguments = arguments,
+                    onClick = { interactionListener?.onDialogNeutralClick(this@ConfirmationDialog) },
+                )
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sport.abox.adapter.RoundsRecycleAdapter
@@ -15,6 +16,7 @@ import com.sport.abox.db.entities.Training
 import com.sport.abox.dialogs.ConfirmationDialog
 import com.sport.abox.dialogs.EnterTextDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.sport.abox.adapter.SimpleItemTouchHelperCallback
 
 class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionListener,
     EnterTextDialog.InteractionListener {
@@ -50,10 +52,8 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         rounds = findViewById(R.id.tvRounds)
 
         val training = intent.getParcelableExtra<Training>(KEY_TRAINING)
-        allTitlesTrainings = intent.getStringArrayListExtra("allTitleTrainings")
 
         if (training == null) {
-            originTraining = training
             callDialogEnterText(
                 text = "New training",
                 positiveBtn = "Ok",
@@ -72,7 +72,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         adapter = RoundsRecycleAdapter(
             exercises = mutableListOf(),
             onClick = { index -> onRoundClick(index) },
-            onLongClick = { index -> onRoundLongClick(index) },
+            onLongClick = { index -> onLongClick(index) },
         )
 
         updateExercises(exercises)
@@ -80,6 +80,13 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         recycleView = findViewById(R.id.rvAllRoundsAtTraining)
         recycleView?.layoutManager = LinearLayoutManager(this)
         recycleView?.adapter = adapter
+
+        adapter?.let {
+            ItemTouchHelper(
+                SimpleItemTouchHelperCallback(it)
+            )
+                .attachToRecyclerView(recycleView)
+        }
 
         findViewById<FloatingActionButton>(R.id.btnAddRound).setOnClickListener {
             if (exercises.size < 16) {
@@ -124,15 +131,20 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0, ItemIsMenu.SAVE_ID.index, 0, ItemIsMenu.SAVE_ID.title)
-        menu?.add(0, ItemIsMenu.DELETE_ALL_ID.index, 0, ItemIsMenu.DELETE_ALL_ID.title)
-        menu?.add(0, ItemIsMenu.DELETE_TRAINING_ID.index, 0, ItemIsMenu.DELETE_TRAINING_ID.title)
+        menu?.add(0, TrainingMenu.SAVE_ID.index, 0, TrainingMenu.SAVE_ID.title)
+        menu?.add(0, TrainingMenu.DELETE_ALL_ID.index, 0, TrainingMenu.DELETE_ALL_ID.title)
+        menu?.add(
+            0,
+            TrainingMenu.DELETE_TRAINING_ID.index,
+            0,
+            TrainingMenu.DELETE_TRAINING_ID.title
+        )
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            ItemIsMenu.SAVE_ID.index -> {
+            TrainingMenu.SAVE_ID.index -> {
                 when {
                     originTraining?.id == null
                             && allTitlesTrainings?.contains(trainingTitle?.text) == false -> {
@@ -160,10 +172,10 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                 }
 
             }
-            ItemIsMenu.DELETE_ALL_ID.index -> {
+            TrainingMenu.DELETE_ALL_ID.index -> {
                 deleteAllRounds()
             }
-            ItemIsMenu.DELETE_TRAINING_ID.index -> {
+            TrainingMenu.DELETE_TRAINING_ID.index -> {
                 callConfirmationDialog(
                     message = "The workout will be permanently deleted!",
                     positiveBtn = "Delete",
@@ -206,7 +218,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         )
     }
 
-    private fun onRoundLongClick(indexElement: Int) {
+    private fun onLongClick(indexElement: Int) {
         indexElDialog = indexElement
         callConfirmationDialog(
             message = "Round [ ${indexElement.plus(1)} ]",

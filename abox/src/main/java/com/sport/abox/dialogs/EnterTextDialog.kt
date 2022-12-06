@@ -64,38 +64,32 @@ class EnterTextDialog : DialogFragment() {
         val editText = view.findViewById<TextView>(R.id.etEnterText)
         editText.text = arguments?.getString(KEY_TEXT)
 
-        createButton(
-            id = R.id.btnPositiveEnterText,
-            key = KEY_POS,
-            onClick = {
-                interactionListener?.onDialogSetTextClick(
-                    dialog = this@EnterTextDialog,
-                    newText = editText.text.toString(),
+        arguments?.let { arguments ->
+            view.apply {
+                setUpButton(
+                    id = R.id.btnPositiveEnterText,
+                    key = KEY_POS,
+                    arguments = arguments,
+                    onClick = {
+                        interactionListener?.onDialogSetTextClick(
+                            dialog = this@EnterTextDialog,
+                            newText = editText.text.toString(),
+                        )
+                    }
+                )
+                setUpButton(
+                    id = R.id.btnNegativeEnterText,
+                    key = KEY_NEG,
+                    arguments = arguments,
+                    onClick = { editText.text = "" }
+                )
+                setUpButton(
+                    id = R.id.btnNeutralEnterText,
+                    key = KEY_NEUTR,
+                    arguments = arguments,
+                    onClick = { dismiss() }
                 )
             }
-        )
-
-        createButton(
-            id = R.id.btnNegativeEnterText,
-            key = KEY_NEG,
-            onClick = { editText.text = "" }
-        )
-
-        createButton(
-            id = R.id.btnNeutralEnterText,
-            key = KEY_NEUTR,
-            onClick = { dismiss() }
-        )
-    }
-
-    private fun createButton(id: Int, key: String, onClick: () -> Unit) {
-        view?.findViewById<Button>(id)?.apply {
-            arguments?.getString(key)?.let {
-                text = it
-                setOnClickListener {
-                    onClick()
-                }
-            } ?: run { visibility = View.GONE }
         }
     }
 

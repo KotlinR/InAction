@@ -1,5 +1,6 @@
 package com.sport.abox.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ class TrainingsRecyclerAdapter(
         holder.onUnbind()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateTrainings(allTrainings: List<Training>) {
         trainings = allTrainings
         notifyDataSetChanged()

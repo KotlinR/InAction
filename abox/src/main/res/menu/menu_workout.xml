@@ -6,13 +6,11 @@
         android:iconTint="@color/cardview_dark_background"
         android:iconTintMode="src_atop"
         android:title="@string/setting">
-
     </item>
     <item
         android:id="@+id/menu_open"
         android:icon="@android:drawable/ic_menu_set_as"
         android:title="@string/open">
-
     </item>
     <item
         android:id="@+id/menu_save"
