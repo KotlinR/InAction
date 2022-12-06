@@ -59,17 +59,17 @@ class AllTrainingsActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0, TrainingMenu.SETTINGS_ID.index, 0, TrainingMenu.SETTINGS_ID.title)
-        menu?.add(0, TrainingMenu.DELETE_ALL_ID.index, 0, TrainingMenu.DELETE_ALL_ID.title)
+        menu?.add(0, TrainingMenu.SETTINGS.index, 0, TrainingMenu.SETTINGS.title)
+        menu?.add(0, TrainingMenu.CLEAR.index, 0, TrainingMenu.CLEAR.title)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            TrainingMenu.SETTINGS_ID.index -> {
+            TrainingMenu.SETTINGS.index -> {
                 TODO()
             }
-            TrainingMenu.DELETE_ALL_ID.index -> {
+            TrainingMenu.CLEAR.index -> {
                 if (db?.getAllTrainings()?.count != 0) {
                     db?.deleteAllTrainings()
                 }

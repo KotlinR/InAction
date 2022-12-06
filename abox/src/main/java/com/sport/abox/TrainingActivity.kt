@@ -16,7 +16,7 @@ import com.sport.abox.db.entities.Training
 import com.sport.abox.dialogs.ConfirmationDialog
 import com.sport.abox.dialogs.EnterTextDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.sport.abox.adapter.SimpleItemTouchHelperCallback
+import com.sport.abox.adapter.item.touch.SimpleItemTouchHelperCallback
 
 class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionListener,
     EnterTextDialog.InteractionListener {
@@ -31,25 +31,22 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         const val CLOSE_ACTIVITY_DIALOG = "close_activity_dialog_type"
     }
 
-    private var db: DBManager? = null
+    private val db by lazy { DBManager(this).also { it.open() } }
+    private val fab by lazy { findViewById<FloatingActionButton>(R.id.btnAddRound) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvAllRoundsAtTraining) }
+    private val trainingTitle by lazy { findViewById<TextView>(R.id.tvTrainingTitle) }
+    private val rounds by lazy { findViewById<TextView>(R.id.tvRounds) }
 
-    private var recycleView: RecyclerView? = null
     private var adapter: RoundsRecycleAdapter? = null
-
     private var originTraining: Training? = null
     private val exercises: MutableList<String> = mutableListOf()
-    private var trainingTitle: TextView? = null
-    private var rounds: TextView? = null
 
     private var indexElDialog: Int? = null
-    private var allTitlesTrainings: ArrayList<String>? = null
+    private var allTitlesTrainings: ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.training_activity)
-
-        trainingTitle = findViewById(R.id.tvTrainingTitle)
-        rounds = findViewById(R.id.tvRounds)
 
         val training = intent.getParcelableExtra<Training>(KEY_TRAINING)
 
@@ -72,23 +69,23 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         adapter = RoundsRecycleAdapter(
             exercises = mutableListOf(),
             onClick = { index -> onRoundClick(index) },
-            onLongClick = { index -> onLongClick(index) },
+            onSwipe = { index -> onRoundSwipe(index) },
+            reversUpdateExercises = { exercises -> reversUpdateExercises(exercises) },
         )
 
         updateExercises(exercises)
 
-        recycleView = findViewById(R.id.rvAllRoundsAtTraining)
-        recycleView?.layoutManager = LinearLayoutManager(this)
-        recycleView?.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
 
         adapter?.let {
             ItemTouchHelper(
                 SimpleItemTouchHelperCallback(it)
             )
-                .attachToRecyclerView(recycleView)
+                .attachToRecyclerView(recyclerView)
         }
 
-        findViewById<FloatingActionButton>(R.id.btnAddRound).setOnClickListener {
+        fab.setOnClickListener {
             if (exercises.size < 16) {
                 callDialogEnterText(
                     text = "Exercise",
@@ -103,7 +100,7 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
             }
         }
 
-        trainingTitle?.setOnClickListener {
+        trainingTitle.setOnClickListener {
             callDialogEnterText(
                 text = trainingTitle?.text.toString(),
                 positiveBtn = "Ok",
@@ -131,27 +128,24 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0, TrainingMenu.SAVE_ID.index, 0, TrainingMenu.SAVE_ID.title)
-        menu?.add(0, TrainingMenu.DELETE_ALL_ID.index, 0, TrainingMenu.DELETE_ALL_ID.title)
-        menu?.add(
-            0,
-            TrainingMenu.DELETE_TRAINING_ID.index,
-            0,
-            TrainingMenu.DELETE_TRAINING_ID.title
-        )
+        menu?.apply {
+            add(0, TrainingMenu.SAVE.index, 0, TrainingMenu.SAVE.title)
+            add(0, TrainingMenu.CLEAR.index, 0, TrainingMenu.CLEAR.title)
+            add(0, TrainingMenu.DELETE.index, 0, TrainingMenu.DELETE.title)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            TrainingMenu.SAVE_ID.index -> {
+            TrainingMenu.SAVE.index -> {
                 when {
                     originTraining?.id == null
-                            && allTitlesTrainings?.contains(trainingTitle?.text) == false -> {
+                            && allTitlesTrainings.contains(trainingTitle?.text) == false -> {
                         saveTraining()
                     }
                     originTraining?.id != null
-                            && (allTitlesTrainings?.contains(trainingTitle?.text) == false
+                            && (allTitlesTrainings.contains(trainingTitle?.text) == false
                             || originTraining?.title == trainingTitle?.text) -> {
                         callConfirmationDialog(
                             message = "The training has been changed. Do you want to save?",
@@ -172,10 +166,10 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
                 }
 
             }
-            TrainingMenu.DELETE_ALL_ID.index -> {
-                deleteAllRounds()
+            TrainingMenu.CLEAR.index -> {
+                clearTraining()
             }
-            TrainingMenu.DELETE_TRAINING_ID.index -> {
+            TrainingMenu.DELETE.index -> {
                 callConfirmationDialog(
                     message = "The workout will be permanently deleted!",
                     positiveBtn = "Delete",
@@ -189,153 +183,13 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
         return super.onOptionsItemSelected(item)
     }
 
-    private fun createOrEditTrainingTitle(titleText: String) {
-        trainingTitle?.text = titleText
-    }
-
-    private fun deleteRound(index: Int?) {
-        if (index != null) {
-            exercises.removeAt(index)
-            updateExercises(exercises)
-        }
-    }
-
-    private fun deleteAllRounds() {
-        exercises.clear()
-        rounds?.text = ""
-        updateExercises(exercises)
-    }
-
-    private fun onRoundClick(exerciseIndex: Int) {
-        indexElDialog = exerciseIndex
-        callDialogEnterText(
-            text = exercises[exerciseIndex],
-            positiveBtn = "OK",
-            negativeBtn = "Clear",
-            neutralBtn = "Cancel",
-            title = "Edit exercise",
-            tag = EDIT_EXERCISE_DIALOG,
-        )
-    }
-
-    private fun onLongClick(indexElement: Int) {
-        indexElDialog = indexElement
-        callConfirmationDialog(
-            message = "Round [ ${indexElement.plus(1)} ]",
-            positiveBtn = "Delete",
-            negativeBtn = null,
-            neutralBtn = "Cancel",
-            title = "Delete round?",
-            tag = DELETE_ROUND_DIALOG,
-        )
-    }
-
-    private fun editExercise(newExercise: String, index: Int?) {
-        if (index != null) {
-            exercises[index] = newExercise
-            updateExercises(exercises)
-        }
-    }
-
-    private fun addExercise(newExercise: String) {
-        exercises.add(newExercise)
-        updateExercises(exercises)
-    }
-
-    private fun updateExercises(exercises: List<String>) {
-        adapter?.updateRounds(exercises)
-        if (exercises.isNotEmpty()) {
-            rounds?.text = exercises.size.toString()
-        } else {
-            rounds?.text = ""
-        }
-    }
-
-    private fun saveTraining() {
-        db = DBManager(this).apply {
-            open()
-            saveTraining(
-                Training(
-                    id = "",
-                    title = trainingTitle?.text.toString(),
-                    exercises = exercises
-                )
-            )
-        }
-        Toast.makeText(this, "Training saved", Toast.LENGTH_SHORT).show()
-        finish()
-    }
-
-    private fun updateTraining() {
-        val updatedTraining = Training(
-            id = originTraining?.id.toString(),
-            title = trainingTitle?.text.toString(),
-            exercises = exercises
-        )
-        db = DBManager(this).apply {
-            open()
-            updateTraining(updatedTraining)
-        }
-        originTraining = updatedTraining
-        Toast.makeText(this, "Changes saved", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun deleteTraining() {
-        if (originTraining?.id != null) {
-            db = DBManager(this).apply {
-                open()
-                originTraining?.let {
-                    deleteTraining(it)
-                }
-            }
-            Toast.makeText(this, "Training deleted", Toast.LENGTH_SHORT).show()
-            finish()
-        } else {
-            Toast.makeText(this, "This training is not in the database", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun callDialogEnterText(
-        text: String,
-        positiveBtn: String?,
-        negativeBtn: String?,
-        neutralBtn: String?,
-        title: String,
-        tag: String,
-    ) {
-        EnterTextDialog.newInstance(
-            text = text,
-            positiveBtn = positiveBtn,
-            negativeBtn = negativeBtn,
-            neutralBtn = neutralBtn,
-            title = title,
-        ).show(supportFragmentManager, tag)
-    }
-
-    private fun callConfirmationDialog(
-        message: String,
-        positiveBtn: String?,
-        negativeBtn: String?,
-        neutralBtn: String?,
-        title: String,
-        tag: String,
-    ) {
-        ConfirmationDialog.newInstance(
-            message = message,
-            positiveBtn = positiveBtn,
-            negativeBtn = negativeBtn,
-            neutralBtn = neutralBtn,
-            title = title,
-        ).show(supportFragmentManager, tag)
-    }
-
     override fun onDialogSetTextClick(
         dialog: DialogFragment,
         newText: String,
     ) {
         when (dialog.tag) {
             EDIT_TITLE_DIALOG -> {
-                createOrEditTrainingTitle(newText)
+                editTrainingTitle(newText)
                 dialog.dismiss()
             }
             CREATE_EXERCISE_DIALOG -> {
@@ -379,5 +233,141 @@ class TrainingActivity : AppCompatActivity(), ConfirmationDialog.InteractionList
 
     override fun onDialogNeutralClick(dialog: DialogFragment) {
         dialog.dismiss()
+    }
+
+    private fun editTrainingTitle(titleText: String) {
+        trainingTitle?.text = titleText
+    }
+
+    private fun deleteRound(index: Int?) {
+        if (index != null) {
+            exercises.removeAt(index)
+            updateExercises(exercises)
+        }
+    }
+
+    private fun clearTraining() {
+        exercises.clear()
+        rounds?.text = ""
+        updateExercises(exercises)
+    }
+
+    private fun onRoundClick(exerciseIndex: Int) {
+        indexElDialog = exerciseIndex
+        callDialogEnterText(
+            text = exercises[exerciseIndex],
+            positiveBtn = "OK",
+            negativeBtn = "Clear",
+            neutralBtn = "Cancel",
+            title = "Edit exercise",
+            tag = EDIT_EXERCISE_DIALOG,
+        )
+    }
+
+    private fun onRoundSwipe(indexElement: Int) {
+        indexElDialog = indexElement
+        callConfirmationDialog(
+            message = "Round [ ${indexElement + 1} ]",
+            positiveBtn = "Delete",
+            negativeBtn = null,
+            neutralBtn = "Cancel",
+            title = "Delete round?",
+            tag = DELETE_ROUND_DIALOG,
+        )
+    }
+
+    private fun editExercise(newExercise: String, index: Int?) {
+        if (index != null) {
+            exercises[index] = newExercise
+            updateExercises(exercises)
+        }
+    }
+
+    private fun addExercise(newExercise: String) {
+        exercises.add(newExercise)
+        updateExercises(exercises)
+    }
+
+    private fun updateExercises(exercises: List<String>) {
+        adapter?.updateRounds(exercises)
+        if (exercises.isNotEmpty()) {
+            rounds?.text = exercises.size.toString()
+        } else {
+            rounds?.text = ""
+        }
+    }
+
+    private fun reversUpdateExercises(newExercises: List<String>) {
+        exercises.clear()
+        exercises.addAll(newExercises)
+    }
+
+    private fun saveTraining() {
+        db.saveTraining(
+            Training(
+                id = "",
+                title = trainingTitle?.text.toString(),
+                exercises = exercises
+            )
+        )
+        Toast.makeText(this, "Training saved", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    private fun updateTraining() {
+        val updatedTraining = Training(
+            id = originTraining?.id.toString(),
+            title = trainingTitle?.text.toString(),
+            exercises = exercises
+        )
+        db.updateTraining(updatedTraining)
+        originTraining = updatedTraining
+        Toast.makeText(this, "Changes saved", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun deleteTraining() {
+        if (originTraining?.id != null) {
+            originTraining?.let {
+                db.deleteTraining(it)
+            }
+            Toast.makeText(this, "Training deleted", Toast.LENGTH_SHORT).show()
+            finish()
+        } else {
+            Toast.makeText(this, "This training is not in the database", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun callDialogEnterText(
+        text: String,
+        positiveBtn: String?,
+        negativeBtn: String?,
+        neutralBtn: String?,
+        title: String,
+        tag: String,
+    ) {
+        EnterTextDialog.newInstance(
+            text = text,
+            positiveBtn = positiveBtn,
+            negativeBtn = negativeBtn,
+            neutralBtn = neutralBtn,
+            title = title,
+        ).show(supportFragmentManager, tag)
+    }
+
+    private fun callConfirmationDialog(
+        message: String,
+        positiveBtn: String?,
+        negativeBtn: String?,
+        neutralBtn: String?,
+        title: String,
+        tag: String,
+    ) {
+        ConfirmationDialog.newInstance(
+            message = message,
+            positiveBtn = positiveBtn,
+            negativeBtn = negativeBtn,
+            neutralBtn = neutralBtn,
+            title = title,
+        ).show(supportFragmentManager, tag)
     }
 }

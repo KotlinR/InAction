@@ -14,6 +14,7 @@ import com.sport.abox.R
 class ConfirmationDialog : DialogFragment() {
 
     companion object {
+
         private const val KEY_MESSAGE = "message"
         private const val KEY_YES = "yesBtn"
         private const val KEY_NO = "noBtn"
