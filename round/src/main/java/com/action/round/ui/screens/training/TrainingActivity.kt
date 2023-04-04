@@ -10,9 +10,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.action.round.App
+import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
 import com.action.round.data.Training
 import com.action.round.ui.adapter.ExercisesRecycleAdapter
@@ -32,8 +31,7 @@ class TrainingActivity : AppCompatActivity() {
         private const val KEY_TRAINING = "training"
 
         fun buildIntent(activity: AppCompatActivity, training: Training?): Intent {
-            return Intent(activity, TrainingActivity::class.java)
-                .putExtra(KEY_TRAINING, training)
+            return Intent(activity, TrainingActivity::class.java).putExtra(KEY_TRAINING, training)
         }
     }
 
@@ -43,25 +41,17 @@ class TrainingActivity : AppCompatActivity() {
     private val rounds by lazy { findViewById<TextView>(R.id.tvRounds) }
 
     private val viewModel: TrainingViewModel by viewModels {
-        (application as App).dependencies.trainingViewModelFactory
+        dependencies.trainingViewModelFactory
     }
 
     private var adapter: ExercisesRecycleAdapter? = null
-    private var originTraining: Training? = null
-
-    private var indexElDialog: Int? = null
-    private var allTitlesTrainings: ArrayList<String> = arrayListOf()
     private var training: Training? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
 
-        training = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(KEY_TRAINING, Training::class.java)
-        } else {
-            intent.getParcelableExtra(KEY_TRAINING)
-        }
-
+        setUpTraining()
         initUI()
         initObserves()
     }
@@ -78,13 +68,17 @@ class TrainingActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             TrainingMenu.SAVE.index -> {
-                viewModel.saveTraining(
-                    Training(
-                        id = training?.id,
+                val training = training
+                if (training == null) {
+                    viewModel.saveTraining(
                         title = trainingTitle.text.toString(),
-                        exercises = viewModel.exercisesLiveData.value.orEmpty()
                     )
-                )
+                } else {
+                    viewModel.updateTraining(
+                        id = training.id,
+                        title = trainingTitle.text.toString(),
+                    )
+                }
             }
             TrainingMenu.CLEAR.index -> {
                 viewModel.clearExercises()
@@ -97,25 +91,28 @@ class TrainingActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun setUpTraining() {
+        training = intent.getTraining()
+        viewModel.setTraining(training)
+        // TODO: request|clear focus
+        trainingTitle.text = training?.title
+        rounds.text = training?.exercises.orEmpty().size.toString()
+    }
+
     private fun initUI() {
         adapter = ExercisesRecycleAdapter(
-            exercises =,
             onSwipe = { id -> viewModel.deleteExercise(id) },
             onMove = { from, to -> viewModel.moveExercise(from, to) },
         )
 
         adapter?.let {
-            ItemTouchHelper(
-                SimpleItemTouchHelperCallback(it)
-            )
-                .attachToRecyclerView(recyclerView)
+            ItemTouchHelper(SimpleItemTouchHelperCallback(it)).attachToRecyclerView(recyclerView)
         }
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
         fab.setOnClickListener {
-            if (exercises.size < 16) {
+            if (viewModel.exercisesLiveData.value.orEmpty().size < 16) {
                 viewModel.addNewExercise()
             } else {
                 Toast.makeText(this, "Max 16 rounds", Toast.LENGTH_SHORT).show()
@@ -124,22 +121,17 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun initObserves() {
-        viewModel.displayTraining(training)
-
-        viewModel.trainingLiveData.observe(this) { trainingLive ->
-            originTraining = trainingLive
-            if (trainingLive != null) {
-                trainingTitle.text = trainingLive.title
-                rounds.text = trainingLive.exercises.size.toString()
-                exercises = trainingLive.exercises
-            }
+        viewModel.exercisesLiveData.observe(this) { exercises ->
+            adapter?.submitList(exercises.orEmpty())
+            rounds?.text = exercises.orEmpty().size.toString()
         }
+    }
 
-        viewModel.exercisesLiveData.observe(this) { exercisesLive ->
-            if (exercisesLive == null) return@observe
-            exercises = exercisesLive
-            adapter?.updateExercises(exercises)
-            rounds?.text = exercises.size.toString()
+    private fun Intent.getTraining(): Training? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getParcelableExtra(KEY_TRAINING, Training::class.java)
+        } else {
+            @Suppress("DEPRECATION") getParcelableExtra(KEY_TRAINING)
         }
     }
 }

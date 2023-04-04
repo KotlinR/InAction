@@ -1,4 +1,4 @@
-package com.action.round.dialog
+package com.action.round.ui.dialog.utilits
 
 import android.os.Bundle
 import android.view.View

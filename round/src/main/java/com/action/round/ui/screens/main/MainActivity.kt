@@ -5,7 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.action.round.App
+import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
 import com.action.round.data.Training
 import com.action.round.ui.adapter.TrainingsRecyclerAdapter
@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvAllTrainingsList) }
 
     private val viewModel: MainViewModel by viewModels {
-        (application as App).dependencies.mainViewModelFactory
+        dependencies.mainViewModelFactory
     }
 
     private var adapter: TrainingsRecyclerAdapter? = null

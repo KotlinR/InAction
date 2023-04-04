@@ -27,7 +27,7 @@ class SimpleItemTouchHelperCallback(
     ): Boolean {
         adapter.onItemMove(
             viewHolder.adapterPosition,
-            target.adapterPosition
+            target.adapterPosition,
         )
         return true
     }

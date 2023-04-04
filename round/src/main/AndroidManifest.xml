@@ -10,7 +10,8 @@
         android:theme="@style/Theme.InAction">
         <activity
             android:name=".ui.screens.training.TrainingActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.screens.main.MainActivity"
             android:exported="true">

@@ -5,19 +5,24 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.room.Room
+import com.action.round.data.LocalExercisesRepository
 import com.action.round.data.Repository
 import com.action.round.data.TrainingConverter
 import com.action.round.data.db.InActionDatabase
 import com.action.round.data.db.TrainingDao
 import com.action.round.ui.screens.main.MainViewModel
-import com.action.round.ui.screens.training.LocalExercisesRepository
 import com.action.round.ui.screens.training.TrainingViewModel
 import java.util.concurrent.Executors
 
 class Dependencies(context: Context) {
+    companion object {
+        val Context.dependencies: Dependencies
+            get() = when (this) {
+                is App -> dependencies
+                else -> applicationContext.dependencies
+            }
 
-    private companion object {
-        const val DATABASE_NAME = "database.db"
+        private const val DATABASE_NAME = "database.db"
     }
 
     val mainViewModelFactory: ViewModelProvider.Factory
@@ -44,14 +49,17 @@ class Dependencies(context: Context) {
         get() = Repository(
             trainingDao = dao,
             es = Executors.newSingleThreadExecutor(),
-            converter = converter,
+            trainingConverter = trainingConverter,
         )
-    private val converter: TrainingConverter
+
+    private val trainingConverter: TrainingConverter
         get() = TrainingConverter()
 
     private val dao: TrainingDao
         get() = db.trainingDao()
 
     private val localExercisesRepository: LocalExercisesRepository
-        get() = LocalExercisesRepository()
+        get() = LocalExercisesRepository(
+            es = Executors.newSingleThreadExecutor(),
+        )
 }

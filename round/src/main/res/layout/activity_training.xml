@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.action.round.ui.screens.training.TrainingActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,45 +17,31 @@
         app:srcCompat="@android:drawable/ic_input_add"
         tools:ignore="ContentDescription,MissingConstraints" />
 
-    <Space
-        android:id="@+id/sp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:layout_constraintBottom_toTopOf="@id/rvAllRoundsAtTraining"
-        app:layout_constraintEnd_toStartOf="@+id/etTrainingTitle"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
         android:id="@+id/etTrainingTitle"
-        android:hint="@string/title_of_training"
-        android:inputType="text"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:clickable="true"
         android:gravity="center"
+        android:hint="@string/title_of_training"
+        android:inputType="text"
         android:text=""
         android:textColor="#03A9F4"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@id/rvAllRoundsAtTraining"
-        app:layout_constraintEnd_toStartOf="@+id/tvRounds"
-        app:layout_constraintHorizontal_weight="5"
-        app:layout_constraintStart_toEndOf="@+id/sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvRounds"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text=""
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@id/rvAllRoundsAtTraining"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/etTrainingTitle"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,10 +49,8 @@
         android:id="@+id/rvAllRoundsAtTraining"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

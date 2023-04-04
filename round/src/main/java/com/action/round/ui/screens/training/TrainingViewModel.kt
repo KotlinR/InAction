@@ -1,8 +1,9 @@
 package com.action.round.ui.screens.training
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.action.round.data.Exercise
+import com.action.round.data.LocalExercisesRepository
 import com.action.round.data.Repository
 import com.action.round.data.Training
 
@@ -11,48 +12,49 @@ class TrainingViewModel(
     private val localExercisesRepository: LocalExercisesRepository,
 ) : ViewModel() {
 
-    private val _exercisesLiveData = MutableLiveData<List<String>>()
-    val exercisesLiveData: LiveData<List<String>> = _exercisesLiveData
+    val exercisesLiveData: LiveData<List<Exercise>> = localExercisesRepository.exercisesLiveData
 
-    private val _trainingLiveData = MutableLiveData<Training?>()
-    val trainingLiveData: LiveData<Training?> = _trainingLiveData
-
-    fun displayTraining(training: Training?) {
+    fun setTraining(training: Training?) {
         localExercisesRepository.setExercises(training?.exercises.orEmpty())
-        _trainingLiveData.value = training
-        _exercisesLiveData.value = localExercisesRepository.getExercises()
-    }
-
-    fun deleteExercise(position: Int) {
-        localExercisesRepository.delete(position)
-        _exercisesLiveData.value = localExercisesRepository.getExercises()
     }
 
     fun deleteTraining(training: Training?) {
         training?.let { repository.delete(it) {} }
     }
 
-    fun saveTraining(training: Training) {
-        if (training.id == null) {
-            repository.save(training)
-            _trainingLiveData.value = training
-        } else {
-            // TODO (обновление тренировки)
-        }
+    fun saveTraining(
+        title: String,
+    ) {
+        repository.save(
+            title = title,
+            exercises = exercisesLiveData.value.orEmpty().map { it.description },
+        )
+    }
+
+    fun updateTraining(
+        id: Int,
+        title: String,
+    ) {
+        repository.update(
+            id = id,
+            title = title,
+            exercises = exercisesLiveData.value.orEmpty().map { it.description },
+        )
     }
 
     fun clearExercises() {
-//        _exercisesLiveData.value = listOf()
+        localExercisesRepository.clear()
     }
 
     fun addNewExercise() {
         localExercisesRepository.add()
-        _exercisesLiveData.value = localExercisesRepository.getExercises()
     }
 
     fun moveExercise(from: Int, to: Int) {
         localExercisesRepository.move(from, to)
-        _exercisesLiveData.value = localExercisesRepository.getExercises()
     }
 
+    fun deleteExercise(position: Int) {
+        localExercisesRepository.deleteByPosition(position)
+    }
 }

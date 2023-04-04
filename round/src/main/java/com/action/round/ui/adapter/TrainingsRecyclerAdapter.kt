@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
 import com.action.round.data.Training
 
+// TODO replace with ListAdapter
 class TrainingsRecyclerAdapter(
     private var trainings: List<Training>,
     private val onLongClick: (Training) -> Unit,

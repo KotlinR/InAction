@@ -1,6 +1,5 @@
 package com.action.round.ui.adapter
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +9,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
+import com.action.round.data.Exercise
 import com.action.round.ui.adapter.item.touch.ItemTouchHelperAdapter
 import com.action.round.ui.adapter.item.touch.ItemTouchHelperViewHolder
 
 class ExercisesRecycleAdapter(
-    private var exercises: List<String>,
     private val onSwipe: (position: Int) -> Unit,
     private val onMove: (from: Int, to: Int) -> Unit,
-//    private val onClick: (Int) -> Unit,
-) : ListAdapter<String, ExercisesRecycleAdapter.RoundViewHolder>(ExercisesDiffUtilCallback()),
+) : ListAdapter<Exercise, ExercisesRecycleAdapter.RoundViewHolder>(ExercisesDiffUtilCallback()),
     ItemTouchHelperAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoundViewHolder {
@@ -26,15 +24,12 @@ class ExercisesRecycleAdapter(
             view = LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.round_and_exercises, parent, false),
-//            onClick = onClick,
         )
     }
 
     override fun onBindViewHolder(holder: RoundViewHolder, position: Int) {
-        holder.onBind(exercises[position], position)
+        holder.onBind(getItem(position))
     }
-
-    override fun getItemCount() = exercises.size
 
     override fun onViewRecycled(holder: RoundViewHolder) {
         super.onViewRecycled(holder)
@@ -49,20 +44,12 @@ class ExercisesRecycleAdapter(
         onSwipe(position)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onListUpdate() {
-        submitList(exercises)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateExercises(updatedExercises: List<String>) {
-        exercises = updatedExercises
-        submitList(exercises)
+        submitList(currentList)
     }
 
     class RoundViewHolder(
         private val view: View,
-//        private val onClick: (Int) -> Unit,
     ) : RecyclerView.ViewHolder(view), ItemTouchHelperViewHolder {
 
         override fun onItemSelected() {
@@ -70,18 +57,16 @@ class ExercisesRecycleAdapter(
         }
 
         override fun onItemClear() {
-            view.setBackgroundColor(Color.WHITE)
+            view.setBackgroundColor(Color.TRANSPARENT)
         }
 
-        @SuppressLint("SetTextI18n")
-        fun onBind(exercise: String, position: Int) {
+        fun onBind(exercise: Exercise) {
             view.apply {
-                findViewById<TextView>(R.id.tvRoundOfTraining).text = "Round [ ${position + 1} ]"
-                findViewById<TextView>(R.id.etExerciseOfTraining).text = exercise
-
-                setOnClickListener {
-//                    onClick(position)
-                }
+                val text = "Round [ ${adapterPosition + 1} ]"
+                findViewById<TextView>(R.id.tvRoundOfTraining).text = text
+                findViewById<TextView>(R.id.etExerciseOfTraining).text = exercise.description
+                // TODO: handle input
+                // TODO: request|clear focus
             }
         }
 
@@ -90,14 +75,13 @@ class ExercisesRecycleAdapter(
         }
     }
 
-    class ExercisesDiffUtilCallback : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
+    class ExercisesDiffUtilCallback : DiffUtil.ItemCallback<Exercise>() {
+        override fun areItemsTheSame(oldItem: Exercise, newItem: Exercise): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
+        override fun areContentsTheSame(oldItem: Exercise, newItem: Exercise): Boolean {
+            return oldItem.description == newItem.description
         }
-
     }
 }

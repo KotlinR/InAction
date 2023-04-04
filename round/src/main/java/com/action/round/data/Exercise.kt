@@ -4,9 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Training(
-    val id: Int = 0,
-    val title: String,
-    val exercises: List<Exercise>,
+data class Exercise(
+    val id: Int = IdGenerator.id, // todo: replace with id from db
+    val description: String = "",
 ) : Parcelable
-

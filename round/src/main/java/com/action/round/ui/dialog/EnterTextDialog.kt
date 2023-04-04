@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.action.round.R
-import com.action.round.dialog.setUpButton
+import com.action.round.ui.dialog.utilits.setUpButton
 
 class EnterTextDialog : DialogFragment() {
 
