@@ -6,24 +6,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
 import com.action.round.ui.adapter.item.touch.ItemTouchHelperAdapter
 import com.action.round.ui.adapter.item.touch.ItemTouchHelperViewHolder
 
-class RoundsRecycleAdapter(
-    private val exercises: MutableList<String>,
-    private val reversUpdateExercises: (List<String>) -> Unit,
-    private val onSwipe: (Int) -> Unit,
-    private val onClick: (Int) -> Unit,
-) : RecyclerView.Adapter<RoundsRecycleAdapter.RoundViewHolder>(), ItemTouchHelperAdapter {
+class ExercisesRecycleAdapter(
+    private var exercises: List<String>,
+    private val onSwipe: (position: Int) -> Unit,
+    private val onMove: (from: Int, to: Int) -> Unit,
+//    private val onClick: (Int) -> Unit,
+) : ListAdapter<String, ExercisesRecycleAdapter.RoundViewHolder>(ExercisesDiffUtilCallback()),
+    ItemTouchHelperAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoundViewHolder {
         return RoundViewHolder(
             view = LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.round_and_exercises, parent, false),
-            onClick = onClick,
+//            onClick = onClick,
         )
     }
 
@@ -39,32 +42,27 @@ class RoundsRecycleAdapter(
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
-        val prev: String = exercises.removeAt(fromPosition)
-        exercises.add(toPosition, prev)
-        notifyItemMoved(fromPosition, toPosition)
+        onMove(fromPosition, toPosition)
     }
 
     override fun onItemDismiss(position: Int) {
         onSwipe(position)
-        notifyItemRemoved(position)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onListUpdate() {
-        reversUpdateExercises(exercises)
-        notifyDataSetChanged()
+        submitList(exercises)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateRounds(allExercises: List<String>) {
-        exercises.clear()
-        exercises.addAll(allExercises)
-        notifyDataSetChanged()
+    fun updateExercises(updatedExercises: List<String>) {
+        exercises = updatedExercises
+        submitList(exercises)
     }
 
     class RoundViewHolder(
         private val view: View,
-        private val onClick: (Int) -> Unit,
+//        private val onClick: (Int) -> Unit,
     ) : RecyclerView.ViewHolder(view), ItemTouchHelperViewHolder {
 
         override fun onItemSelected() {
@@ -72,24 +70,34 @@ class RoundsRecycleAdapter(
         }
 
         override fun onItemClear() {
-            view.setBackgroundColor(0)
+            view.setBackgroundColor(Color.WHITE)
         }
 
         @SuppressLint("SetTextI18n")
         fun onBind(exercise: String, position: Int) {
             view.apply {
                 findViewById<TextView>(R.id.tvRoundOfTraining).text = "Round [ ${position + 1} ]"
-                findViewById<TextView>(R.id.tvExerciseOfTraining).text = exercise
+                findViewById<TextView>(R.id.etExerciseOfTraining).text = exercise
 
                 setOnClickListener {
-                    onClick(position)
+//                    onClick(position)
                 }
             }
         }
 
         fun onUnbind() {
-            view.setOnLongClickListener(null)
             view.setOnClickListener(null)
         }
+    }
+
+    class ExercisesDiffUtilCallback : DiffUtil.ItemCallback<String>() {
+        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+            return oldItem == newItem
+        }
+
     }
 }

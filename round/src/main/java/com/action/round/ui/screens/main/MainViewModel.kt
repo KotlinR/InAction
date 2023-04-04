@@ -1,4 +1,4 @@
-package com.action.round.ui.vm
+package com.action.round.ui.screens.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +17,10 @@ class MainViewModel(
     val openSecondScreenLiveData: LiveData<Training?> = _openSecondScreenLiveData
 
     init {
+        getAllTrainings()
+    }
+
+    fun getAllTrainings() {
         repository.getAll { trainings ->
             _trainingsLiveData.postValue(trainings)
         }

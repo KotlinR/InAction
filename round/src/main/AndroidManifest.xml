@@ -9,10 +9,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InAction">
         <activity
-            android:name=".ui.TrainingActivity"
+            android:name=".ui.screens.training.TrainingActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.screens.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

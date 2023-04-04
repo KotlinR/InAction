@@ -1,4 +1,4 @@
-package com.action.round.ui
+package com.action.round.ui.screens.main
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -9,7 +9,7 @@ import com.action.round.App
 import com.action.round.R
 import com.action.round.data.Training
 import com.action.round.ui.adapter.TrainingsRecyclerAdapter
-import com.action.round.ui.vm.MainViewModel
+import com.action.round.ui.screens.training.TrainingActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
     private fun initUI() {
         adapter = TrainingsRecyclerAdapter(
             trainings = trainings,
-            onLongClick = { viewModel.deleteTraining(it) },
-            onClick = { viewModel.openTrainingScreen(it) },
+            onLongClick = { training -> viewModel.deleteTraining(training) },
+            onClick = { training -> viewModel.openTrainingScreen(training) },
         )
 
         recyclerView?.layoutManager = LinearLayoutManager(this)
@@ -56,5 +56,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.openSecondScreenLiveData.observe(this) { training ->
             startActivity(TrainingActivity.buildIntent(this, training))
         }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getAllTrainings()
     }
 }

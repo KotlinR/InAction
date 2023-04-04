@@ -13,16 +13,18 @@
         android:text=""
         android:textColor="@color/classic_yellow"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvExerciseOfTraining"
+        app:layout_constraintBottom_toTopOf="@+id/etExerciseOfTraining"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvExerciseOfTraining"
+    <EditText
+        android:id="@+id/etExerciseOfTraining"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
+        android:hint="@string/enter_exercise"
+        android:inputType="textMultiLine"
         android:text=""
         android:textColor="@color/white"
         android:textSize="16sp"

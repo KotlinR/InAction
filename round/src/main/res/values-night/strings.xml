@@ -32,6 +32,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="all_trainings_btn">ALL TRAININGS</string>
+    <string name="enter_exercise">Enter exercise</string>
+    <string name="title_of_training">Title of training</string>
     <string-array name="spinnerRounds">
         <item>1</item>
         <item>2</item>

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.sport.abox.AllTrainingsActivity">
+    tools:context="com.action.round.ui.screens.training.TrainingActivity">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddRound"
@@ -25,13 +25,15 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         app:layout_constraintBottom_toTopOf="@id/rvAllRoundsAtTraining"
-        app:layout_constraintEnd_toStartOf="@+id/tvTrainingTitle"
+        app:layout_constraintEnd_toStartOf="@+id/etTrainingTitle"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvTrainingTitle"
+    <EditText
+        android:id="@+id/etTrainingTitle"
+        android:hint="@string/title_of_training"
+        android:inputType="text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -56,7 +58,7 @@
         app:layout_constraintBottom_toTopOf="@id/rvAllRoundsAtTraining"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/tvTrainingTitle"
+        app:layout_constraintStart_toEndOf="@+id/etTrainingTitle"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -70,7 +72,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTrainingTitle"
+        app:layout_constraintTop_toBottomOf="@id/etTrainingTitle"
         tools:listitem="@layout/round_and_exercises" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

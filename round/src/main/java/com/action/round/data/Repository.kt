@@ -17,9 +17,15 @@ class Repository(
         }
     }
 
+    fun save(training: Training) {
+        es.execute {
+            trainingDao.insert(converter.convertToDB(training))
+        }
+    }
+
     fun delete(training: Training, onTrainingDeleted: (List<Training>) -> Unit) {
         es.execute {
-            trainingDao.delete(training.id)
+            trainingDao.delete(training.id!!)
             onTrainingDeleted(
                 getConvertedTrainings()
             )
@@ -28,7 +34,7 @@ class Repository(
 
     private fun getConvertedTrainings(): List<Training> {
         return trainingDao.getAll().map { trainingEntity ->
-            converter.convert(trainingEntity)
+            converter.convertFromDB(trainingEntity)
         }
     }
 }

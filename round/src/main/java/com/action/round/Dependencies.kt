@@ -9,7 +9,9 @@ import com.action.round.data.Repository
 import com.action.round.data.TrainingConverter
 import com.action.round.data.db.InActionDatabase
 import com.action.round.data.db.TrainingDao
-import com.action.round.ui.vm.MainViewModel
+import com.action.round.ui.screens.main.MainViewModel
+import com.action.round.ui.screens.training.LocalExercisesRepository
+import com.action.round.ui.screens.training.TrainingViewModel
 import java.util.concurrent.Executors
 
 class Dependencies(context: Context) {
@@ -22,6 +24,13 @@ class Dependencies(context: Context) {
         get() = viewModelFactory {
             initializer {
                 MainViewModel(repository)
+            }
+        }
+
+    val trainingViewModelFactory: ViewModelProvider.Factory
+        get() = viewModelFactory {
+            initializer {
+                TrainingViewModel(repository, localExercisesRepository)
             }
         }
 
@@ -42,4 +51,7 @@ class Dependencies(context: Context) {
 
     private val dao: TrainingDao
         get() = db.trainingDao()
+
+    private val localExercisesRepository: LocalExercisesRepository
+        get() = LocalExercisesRepository()
 }
