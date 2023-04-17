@@ -4,7 +4,9 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,7 @@ import com.action.round.ui.adapter.item.touch.ItemTouchHelperViewHolder
 class ExercisesRecycleAdapter(
     private val onSwipe: (position: Int) -> Unit,
     private val onMove: (from: Int, to: Int) -> Unit,
+    private val onExerciseChange: (id: Int, newText: String) -> Unit,
 ) : ListAdapter<Exercise, ExercisesRecycleAdapter.RoundViewHolder>(ExercisesDiffUtilCallback()),
     ItemTouchHelperAdapter {
 
@@ -24,6 +27,7 @@ class ExercisesRecycleAdapter(
             view = LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.round_and_exercises, parent, false),
+            onExerciseChange = onExerciseChange,
         )
     }
 
@@ -50,6 +54,7 @@ class ExercisesRecycleAdapter(
 
     class RoundViewHolder(
         private val view: View,
+        private val onExerciseChange: (id: Int, newText: String) -> Unit,
     ) : RecyclerView.ViewHolder(view), ItemTouchHelperViewHolder {
 
         override fun onItemSelected() {
@@ -62,11 +67,15 @@ class ExercisesRecycleAdapter(
 
         fun onBind(exercise: Exercise) {
             view.apply {
-                val text = "Round [ ${adapterPosition + 1} ]"
+                val text = "Round [ ${adapterPosition + 1} ]" // todo: fix adapter position
                 findViewById<TextView>(R.id.tvRoundOfTraining).text = text
-                findViewById<TextView>(R.id.etExerciseOfTraining).text = exercise.description
-                // TODO: handle input
-                // TODO: request|clear focus
+                findViewById<EditText>(R.id.etExerciseOfTraining).apply {
+                    setText(exercise.description)
+                    setSelection(exercise.description.length)
+                    doAfterTextChanged {
+                        onExerciseChange(exercise.id, it?.toString().orEmpty())
+                    }
+                }
             }
         }
 

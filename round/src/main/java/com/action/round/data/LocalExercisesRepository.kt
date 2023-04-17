@@ -8,12 +8,28 @@ class LocalExercisesRepository(
     private val es: ExecutorService,
 ) {
 
-    // todo: migrate to coroutines flow
-    private val _exercisesLiveData = MutableLiveData<List<Exercise>>(listOf())
+    private val _exercises = mutableListOf<Exercise>()
+    val exercises: List<Exercise> = _exercises
+
+    private val _exercisesLiveData = MutableLiveData<List<Exercise>>(_exercises)
     val exercisesLiveData: LiveData<List<Exercise>> = _exercisesLiveData
 
+    fun updateExerciseById(id: Int, newDescription: String) {
+        modifyExercises(notifyUpdates = false) { exercises ->
+            exercises.firstOrNull { it.id == id }?.let { toModify ->
+                val modified = toModify.copy(description = newDescription)
+                val index = exercises.indexOf(toModify)
+                exercises.removeAt(index)
+                exercises.add(index, modified)
+            }
+        }
+    }
+
     fun setExercises(newExercises: List<Exercise>) {
-        _exercisesLiveData.value = newExercises
+        modifyExercises { exercises ->
+            exercises.clear()
+            exercises.addAll(newExercises)
+        }
     }
 
     fun move(from: Int, to: Int) {
@@ -36,14 +52,20 @@ class LocalExercisesRepository(
     }
 
     fun clear() {
-        _exercisesLiveData.value = emptyList()
+        modifyExercises { exercises ->
+            exercises.clear()
+        }
     }
 
-    private fun modifyExercises(modify: (MutableList<Exercise>) -> Unit) {
+    private fun modifyExercises(
+        notifyUpdates: Boolean = true,
+        modify: (MutableList<Exercise>) -> Unit,
+    ) {
         es.execute {
-            val exercises = exercisesLiveData.value.orEmpty().toMutableList()
-            modify(exercises)
-            _exercisesLiveData.postValue(exercises)
+            modify(_exercises)
+            if (notifyUpdates) {
+                _exercisesLiveData.postValue(_exercises.toList())
+            }
         }
     }
 }

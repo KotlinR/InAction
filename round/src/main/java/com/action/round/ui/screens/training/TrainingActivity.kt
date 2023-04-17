@@ -103,6 +103,7 @@ class TrainingActivity : AppCompatActivity() {
         adapter = ExercisesRecycleAdapter(
             onSwipe = { id -> viewModel.deleteExercise(id) },
             onMove = { from, to -> viewModel.moveExercise(from, to) },
+            onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) }
         )
 
         adapter?.let {
@@ -112,7 +113,7 @@ class TrainingActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         fab.setOnClickListener {
-            if (viewModel.exercisesLiveData.value.orEmpty().size < 16) {
+            if (viewModel.exercisesSize < 16) {
                 viewModel.addNewExercise()
             } else {
                 Toast.makeText(this, "Max 16 rounds", Toast.LENGTH_SHORT).show()

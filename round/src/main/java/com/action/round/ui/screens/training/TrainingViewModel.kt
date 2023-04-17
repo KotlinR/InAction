@@ -13,6 +13,7 @@ class TrainingViewModel(
 ) : ViewModel() {
 
     val exercisesLiveData: LiveData<List<Exercise>> = localExercisesRepository.exercisesLiveData
+    val exercisesSize: Int get() = localExercisesRepository.exercises.size
 
     fun setTraining(training: Training?) {
         localExercisesRepository.setExercises(training?.exercises.orEmpty())
@@ -27,7 +28,7 @@ class TrainingViewModel(
     ) {
         repository.save(
             title = title,
-            exercises = exercisesLiveData.value.orEmpty().map { it.description },
+            exercises = filledExercises(),
         )
     }
 
@@ -38,7 +39,7 @@ class TrainingViewModel(
         repository.update(
             id = id,
             title = title,
-            exercises = exercisesLiveData.value.orEmpty().map { it.description },
+            exercises = filledExercises(),
         )
     }
 
@@ -56,5 +57,15 @@ class TrainingViewModel(
 
     fun deleteExercise(position: Int) {
         localExercisesRepository.deleteByPosition(position)
+    }
+
+    fun updateExerciseById(id: Int, newDescription: String) {
+        localExercisesRepository.updateExerciseById(id, newDescription)
+    }
+
+    private fun filledExercises(): List<String> {
+        return localExercisesRepository.exercises.mapNotNull { ex ->
+            ex.takeIf { it.description.isNotEmpty() }?.description
+        }
     }
 }

@@ -35,7 +35,10 @@ class Dependencies(context: Context) {
     val trainingViewModelFactory: ViewModelProvider.Factory
         get() = viewModelFactory {
             initializer {
-                TrainingViewModel(repository, localExercisesRepository)
+                TrainingViewModel(
+                    repository = repository,
+                    localExercisesRepository = localExercisesRepository,
+                )
             }
         }
 
