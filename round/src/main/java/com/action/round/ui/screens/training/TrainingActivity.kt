@@ -54,31 +54,6 @@ class TrainingActivity : ComponentActivity() {
         setUpBackPress()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.apply {
-            add(0, TrainingMenu.SAVE.index, 0, TrainingMenu.SAVE.title)
-            add(0, TrainingMenu.CLEAR.index, 0, TrainingMenu.CLEAR.title)
-            add(0, TrainingMenu.DELETE.index, 0, TrainingMenu.DELETE.title)
-        }
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            TrainingMenu.SAVE.index -> {
-                saveTraining()
-            }
-            TrainingMenu.CLEAR.index -> {
-                viewModel.clearExercises()
-            }
-            TrainingMenu.DELETE.index -> {
-                viewModel.deleteTraining(training)
-                finish()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun setUpTraining() {
         training = intent.getTraining()
         viewModel.setTraining(training)
