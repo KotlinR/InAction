@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,10 +19,11 @@ import com.action.round.ui.adapter.ExercisesRecycleAdapter
 import com.action.round.ui.adapter.item.touch.SimpleItemTouchHelperCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class TrainingActivity : AppCompatActivity() {
+class TrainingActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_TRAINING = "training"
+        private const val BACK_PRESS_TIME_MS = 2000L
 
         fun buildIntent(activity: AppCompatActivity, training: Training?): Intent {
             return Intent(activity, TrainingActivity::class.java).putExtra(KEY_TRAINING, training)
@@ -64,17 +66,7 @@ class TrainingActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             TrainingMenu.SAVE.index -> {
-                val training = training
-                if (training == null) {
-                    viewModel.saveTraining(
-                        title = trainingTitle.text.toString(),
-                    )
-                } else {
-                    viewModel.updateTraining(
-                        id = training.id,
-                        title = trainingTitle.text.toString(),
-                    )
-                }
+                saveTraining()
             }
             TrainingMenu.CLEAR.index -> {
                 viewModel.clearExercises()
@@ -98,11 +90,9 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        adapter = ExercisesRecycleAdapter(
-            onSwipe = { id -> viewModel.deleteExercise(id) },
+        adapter = ExercisesRecycleAdapter(onSwipe = { id -> viewModel.deleteExercise(id) },
             onMove = { from, to -> viewModel.moveExercise(from, to) },
-            onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) }
-        )
+            onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) })
 
         adapter?.let {
             ItemTouchHelper(SimpleItemTouchHelperCallback(it)).attachToRecyclerView(recyclerView)
@@ -149,23 +139,28 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     private fun setUpBackPress() {
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
-            override fun handleOnBackPressed() {
-                if (currentFocus != null) {
-                    currentFocus?.clearFocus()
-                } else {
-                    if (backPressed + 2000 > System.currentTimeMillis()) {
-                        saveTraining()
-                        return onBackPressedDispatcher.onBackPressed()
+        onBackPressedDispatcher.addCallback(
+            owner = this,
+            onBackPressedCallback = object : OnBackPressedCallback(enabled = true) {
+                override fun handleOnBackPressed() {
+                    if (currentFocus != null) {
+                        currentFocus?.clearFocus()
                     } else {
-                        Toast.makeText(
-                            this@TrainingActivity, "Press once again to exit!",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if (backPressed + BACK_PRESS_TIME_MS > System.currentTimeMillis()) {
+                            saveTraining()
+                            isEnabled = false
+                            onBackPressedDispatcher.onBackPressed()
+                        } else {
+                            Toast.makeText(
+                                this@TrainingActivity,
+                                "Press once again to exit!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        backPressed = System.currentTimeMillis()
                     }
-                    backPressed = System.currentTimeMillis()
                 }
-            }
-        })
+            },
+        )
     }
 }
