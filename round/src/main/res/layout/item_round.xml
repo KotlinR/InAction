@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:hint="@string/enter_exercise"
+        android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:text=""
         android:textColor="@color/white"

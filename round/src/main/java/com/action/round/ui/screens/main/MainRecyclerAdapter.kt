@@ -1,4 +1,4 @@
-package com.action.round.ui.adapter
+package com.action.round.ui.screens.main
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,17 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
 import com.action.round.data.Training
 
-class TrainingsRecyclerAdapter(
-    private var trainings: List<Training>,
+class MainRecyclerAdapter(
     private val onLongClick: (Training) -> Unit,
     private val onClick: (Training) -> Unit,
-) : RecyclerView.Adapter<TrainingsRecyclerAdapter.TrainingViewHolder>() {
+) : RecyclerView.Adapter<MainRecyclerAdapter.TrainingViewHolder>() {
+
+    private var currentList = listOf<Training>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrainingViewHolder {
         return TrainingViewHolder(
-            itemView = LayoutInflater
-                .from(parent.context)
-                .inflate(R.layout.training_title, parent, false),
+            itemView = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_training, parent, false),
             onLongClick = onLongClick,
             onClick = onClick,
         )
@@ -29,16 +29,20 @@ class TrainingsRecyclerAdapter(
         holder.onBind(position)
     }
 
-    override fun getItemCount() = trainings.size
+    override fun getItemCount() = currentList.size
 
     override fun onViewRecycled(holder: TrainingViewHolder) {
         super.onViewRecycled(holder)
         holder.onUnbind()
     }
 
+    fun submitList(newList: List<Training>) {
+        currentList = newList
+        onListUpdate()
+    }
+
     @SuppressLint("NotifyDataSetChanged")
-    fun updateTrainings(allTrainings: List<Training>) {
-        trainings = allTrainings
+    fun onListUpdate() {
         notifyDataSetChanged()
     }
 
@@ -50,16 +54,16 @@ class TrainingsRecyclerAdapter(
         fun onBind(position: Int) {
             val titleOfTraining = itemView.findViewById<TextView>(R.id.tvWorkoutTitle)
             val roundsOfTraining = itemView.findViewById<TextView>(R.id.tvRounds)
-            titleOfTraining.text = trainings[position].title
-            roundsOfTraining.text = trainings[position].exercises.size.toString()
+            titleOfTraining.text = currentList[position].title
+            roundsOfTraining.text = currentList[position].exercises.size.toString()
 
             itemView.setOnLongClickListener {
-                onLongClick(trainings[position])
+                onLongClick(currentList[position])
                 true
             }
 
             itemView.setOnClickListener {
-                onClick(trainings[position])
+                onClick(currentList[position])
             }
         }
 

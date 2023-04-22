@@ -7,8 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
-import com.action.round.data.Training
-import com.action.round.ui.adapter.TrainingsRecyclerAdapter
 import com.action.round.ui.screens.training.TrainingActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -21,8 +19,7 @@ class MainActivity : AppCompatActivity() {
         dependencies.mainViewModelFactory
     }
 
-    private var adapter: TrainingsRecyclerAdapter? = null
-    private var trainings: List<Training> = listOf()
+    private var adapter: MainRecyclerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +30,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
-        adapter = TrainingsRecyclerAdapter(
-            trainings = trainings,
+        adapter = MainRecyclerAdapter(
             onLongClick = { training -> viewModel.deleteTraining(training) },
             onClick = { training -> viewModel.openTrainingScreen(training) },
         )
@@ -48,9 +44,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initObserves() {
-        viewModel.trainingsLiveData.observe(this) { trainingsLive ->
-            trainings = trainingsLive
-            adapter?.updateTrainings(trainings)
+        viewModel.trainingsLiveData.observe(this) { newTrainings ->
+            adapter?.submitList(newTrainings)
         }
 
         viewModel.openSecondScreenLiveData.observe(this) { training ->

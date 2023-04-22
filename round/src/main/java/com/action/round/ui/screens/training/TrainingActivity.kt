@@ -14,8 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
 import com.action.round.data.Training
-import com.action.round.ui.adapter.ExercisesRecycleAdapter
-import com.action.round.ui.adapter.item.touch.SimpleItemTouchHelperCallback
+import com.action.round.ui.recycler.SimpleItemTouchHelperCallback
 import com.action.round.utills.hideKeyboard
 import com.action.round.utills.toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -42,7 +41,7 @@ class TrainingActivity : ComponentActivity() {
         dependencies.trainingViewModelFactory
     }
 
-    private var adapter: ExercisesRecycleAdapter? = null
+    private var adapter: TraningRecycleAdapter? = null
     private var training: Training? = null
 
     private var backPressed = 0L
@@ -67,7 +66,7 @@ class TrainingActivity : ComponentActivity() {
     }
 
     private fun initUI() {
-        adapter = ExercisesRecycleAdapter(
+        adapter = TraningRecycleAdapter(
             onSwipe = { id -> viewModel.deleteExercise(id) },
             onMove = { from, to -> viewModel.moveExercise(from, to) },
             onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) },

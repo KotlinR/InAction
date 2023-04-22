@@ -1,4 +1,4 @@
-package com.action.round.ui.adapter.item.touch
+package com.action.round.ui.recycler
 
 interface ItemTouchHelperViewHolder {
     fun onItemSelected()

@@ -1,4 +1,4 @@
-package com.action.round.ui.adapter
+package com.action.round.ui.screens.training
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -11,15 +11,15 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
 import com.action.round.data.Exercise
-import com.action.round.ui.adapter.item.touch.ItemTouchHelperAdapter
-import com.action.round.ui.adapter.item.touch.ItemTouchHelperViewHolder
+import com.action.round.ui.recycler.ItemTouchHelperAdapter
+import com.action.round.ui.recycler.ItemTouchHelperViewHolder
 import com.action.round.utills.swap
 
-class ExercisesRecycleAdapter(
+class TraningRecycleAdapter(
     private val onSwipe: (position: Int) -> Unit,
     private val onMove: (from: Int, to: Int) -> Unit,
     private val onExerciseChange: (id: Int, newText: String) -> Unit,
-) : RecyclerView.Adapter<ExercisesRecycleAdapter.RoundViewHolder>(),
+) : RecyclerView.Adapter<TraningRecycleAdapter.RoundViewHolder>(),
     ItemTouchHelperAdapter {
 
     private var currentList = mutableListOf<Exercise>()
@@ -28,7 +28,7 @@ class ExercisesRecycleAdapter(
         return RoundViewHolder(
             view = LayoutInflater
                 .from(parent.context)
-                .inflate(R.layout.round_and_exercises, parent, false),
+                .inflate(R.layout.item_round, parent, false),
             onExerciseChange = onExerciseChange,
         )
     }

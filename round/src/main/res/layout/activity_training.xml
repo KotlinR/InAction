@@ -5,7 +5,8 @@
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.action.round.ui.screens.training.TrainingActivity">
+    tools:context=".ui.screens.training.TrainingActivity"
+    tools:ignore="ContentDescription">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddRound"
@@ -15,8 +16,7 @@
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        tools:ignore="ContentDescription,MissingConstraints" />
+        app:srcCompat="@android:drawable/ic_input_add" />
 
     <EditText
         android:id="@+id/etTrainingTitle"
@@ -26,6 +26,7 @@
         android:clickable="true"
         android:gravity="center"
         android:hint="@string/title_of_training"
+        android:importantForAutofill="no"
         android:inputType="text"
         android:text=""
         android:textColor="#03A9F4"
@@ -51,11 +52,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
+        android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/etTrainingTitle"
-        tools:listitem="@layout/round_and_exercises" />
+        tools:listitem="@layout/item_round" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
