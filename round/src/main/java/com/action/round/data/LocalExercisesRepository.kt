@@ -2,6 +2,8 @@ package com.action.round.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.action.round.utills.findAndUpdate
+import com.action.round.utills.swap
 import java.util.concurrent.ExecutorService
 
 class LocalExercisesRepository(
@@ -16,12 +18,10 @@ class LocalExercisesRepository(
 
     fun updateExerciseById(id: Int, newDescription: String) {
         modifyExercises(notifyUpdates = false) { exercises ->
-            exercises.firstOrNull { it.id == id }?.let { toModify ->
-                val modified = toModify.copy(description = newDescription)
-                val index = exercises.indexOf(toModify)
-                exercises.removeAt(index)
-                exercises.add(index, modified)
-            }
+            exercises.findAndUpdate(
+                predicate = { it.id == id },
+                modify = { it.copy(description = newDescription) },
+            )
         }
     }
 
@@ -34,8 +34,7 @@ class LocalExercisesRepository(
 
     fun move(from: Int, to: Int) {
         modifyExercises(notifyUpdates = false) { exercises ->
-            val removedExercise = exercises.removeAt(from)
-            exercises.add(to, removedExercise)
+            exercises.swap(from, to)
         }
     }
 

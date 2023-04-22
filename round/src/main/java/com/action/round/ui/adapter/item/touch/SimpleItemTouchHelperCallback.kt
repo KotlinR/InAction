@@ -46,6 +46,6 @@ class SimpleItemTouchHelperCallback(
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
         (viewHolder as ItemTouchHelperViewHolder).onItemClear()
-        adapter.onListUpdate()
+        recyclerView.post(adapter::onListUpdate)
     }
 }

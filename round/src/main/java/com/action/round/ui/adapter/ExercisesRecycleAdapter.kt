@@ -1,5 +1,6 @@
 package com.action.round.ui.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -7,20 +8,21 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
 import com.action.round.data.Exercise
 import com.action.round.ui.adapter.item.touch.ItemTouchHelperAdapter
 import com.action.round.ui.adapter.item.touch.ItemTouchHelperViewHolder
+import com.action.round.utills.swap
 
 class ExercisesRecycleAdapter(
     private val onSwipe: (position: Int) -> Unit,
     private val onMove: (from: Int, to: Int) -> Unit,
     private val onExerciseChange: (id: Int, newText: String) -> Unit,
-) : ListAdapter<Exercise, ExercisesRecycleAdapter.RoundViewHolder>(ExercisesDiffUtilCallback()),
+) : RecyclerView.Adapter<ExercisesRecycleAdapter.RoundViewHolder>(),
     ItemTouchHelperAdapter {
+
+    private var currentList = mutableListOf<Exercise>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoundViewHolder {
         return RoundViewHolder(
@@ -32,8 +34,10 @@ class ExercisesRecycleAdapter(
     }
 
     override fun onBindViewHolder(holder: RoundViewHolder, position: Int) {
-        holder.onBind(getItem(position))
+        holder.onBind(currentList[position])
     }
+
+    override fun getItemCount(): Int = currentList.size
 
     override fun onViewRecycled(holder: RoundViewHolder) {
         super.onViewRecycled(holder)
@@ -42,17 +46,24 @@ class ExercisesRecycleAdapter(
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         onMove(fromPosition, toPosition)
+        currentList.swap(fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
     override fun onItemDismiss(position: Int) {
         onSwipe(position)
+        currentList.removeAt(position)
         notifyItemRemoved(position)
-        // TODO fix notify item
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onListUpdate() {
-        submitList(currentList)
+        notifyDataSetChanged()
+    }
+
+    fun submitList(newList: List<Exercise>) {
+        currentList = newList.toMutableList()
+        onListUpdate()
     }
 
     class RoundViewHolder(
@@ -70,7 +81,7 @@ class ExercisesRecycleAdapter(
 
         fun onBind(exercise: Exercise) {
             view.apply {
-                val text = "Round [ ${adapterPosition + 1} ]" // todo: fix adapter position
+                val text = "Round [ ${adapterPosition + 1} ]"
                 findViewById<TextView>(R.id.tvRoundOfTraining).text = text
                 findViewById<EditText>(R.id.etExerciseOfTraining).apply {
                     setText(exercise.description)
@@ -84,16 +95,6 @@ class ExercisesRecycleAdapter(
 
         fun onUnbind() {
             view.setOnClickListener(null)
-        }
-    }
-
-    class ExercisesDiffUtilCallback : DiffUtil.ItemCallback<Exercise>() {
-        override fun areItemsTheSame(oldItem: Exercise, newItem: Exercise): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Exercise, newItem: Exercise): Boolean {
-            return oldItem.description == newItem.description
         }
     }
 }
