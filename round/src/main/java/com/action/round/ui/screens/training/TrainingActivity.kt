@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -17,6 +16,8 @@ import com.action.round.R
 import com.action.round.data.Training
 import com.action.round.ui.adapter.ExercisesRecycleAdapter
 import com.action.round.ui.adapter.item.touch.SimpleItemTouchHelperCallback
+import com.action.round.utills.hideKeyboard
+import com.action.round.utills.toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class TrainingActivity : ComponentActivity() {
@@ -24,18 +25,18 @@ class TrainingActivity : ComponentActivity() {
     companion object {
         private const val KEY_TRAINING = "training"
         private const val BACK_PRESS_TIME_MS = 2000L
+        private const val MAX_NUMBER_OF_ROUND = 16
 
         fun buildIntent(activity: AppCompatActivity, training: Training?): Intent {
             return Intent(activity, TrainingActivity::class.java).putExtra(KEY_TRAINING, training)
         }
     }
 
-    private var backPressed = 0L
-
     private val fab by lazy { findViewById<FloatingActionButton>(R.id.btnAddRound) }
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvAllRoundsAtTraining) }
-    private val trainingTitle by lazy { findViewById<TextView>(R.id.etTrainingTitle) }
-    private val rounds by lazy { findViewById<TextView>(R.id.tvRounds) }
+    private val tvTrainingTitle by lazy { findViewById<TextView>(R.id.etTrainingTitle) }
+    private val tvRounds by lazy { findViewById<TextView>(R.id.tvRounds) }
+    private val rootView by lazy { findViewById<ViewGroup>(R.id.rootView) }
 
     private val viewModel: TrainingViewModel by viewModels {
         dependencies.trainingViewModelFactory
@@ -43,6 +44,8 @@ class TrainingActivity : ComponentActivity() {
 
     private var adapter: ExercisesRecycleAdapter? = null
     private var training: Training? = null
+
+    private var backPressed = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,37 +60,38 @@ class TrainingActivity : ComponentActivity() {
     private fun setUpTraining() {
         training = intent.getTraining()
         viewModel.setTraining(training)
-        // TODO: request|clear focus
-        trainingTitle.text = training?.title
-        rounds.text = training?.exercises.orEmpty().size.toString()
+        tvTrainingTitle.text = training?.title
+        tvRounds.text = training?.exercises.orEmpty().size.toString()
 
-        if (trainingTitle.text.isEmpty()) trainingTitle.requestFocus()
+        if (tvTrainingTitle.text.isEmpty()) tvTrainingTitle.requestFocus()
     }
 
     private fun initUI() {
-        adapter = ExercisesRecycleAdapter(onSwipe = { id -> viewModel.deleteExercise(id) },
+        adapter = ExercisesRecycleAdapter(
+            onSwipe = { id -> viewModel.deleteExercise(id) },
             onMove = { from, to -> viewModel.moveExercise(from, to) },
-            onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) })
-
-        adapter?.let {
+            onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) },
+        ).also {
             ItemTouchHelper(SimpleItemTouchHelperCallback(it)).attachToRecyclerView(recyclerView)
+            recyclerView.adapter = it
         }
-
-        recyclerView.adapter = adapter
 
         fab.setOnClickListener {
-            if (viewModel.exercisesSize < 16) {
+            if (viewModel.exercisesSize < MAX_NUMBER_OF_ROUND) {
+                rootView.hideKeyboard()
                 viewModel.addNewExercise()
             } else {
-                Toast.makeText(this, "Max 16 rounds", Toast.LENGTH_SHORT).show()
+                toast { "You've reached max number of rounds - $MAX_NUMBER_OF_ROUND" }
             }
         }
+
+        rootView.setOnClickListener(View::hideKeyboard)
     }
 
     private fun initObserves() {
         viewModel.exercisesLiveData.observe(this) { exercises ->
             adapter?.submitList(exercises.orEmpty())
-            rounds?.text = exercises.orEmpty().size.toString()
+            tvRounds?.text = exercises.orEmpty().size.toString()
         }
     }
 
@@ -99,16 +103,16 @@ class TrainingActivity : ComponentActivity() {
         }
     }
 
-    private fun saveTraining() {
+    private fun saveOrUpdateTraining() {
         val training = training
         if (training == null) {
             viewModel.saveTraining(
-                title = trainingTitle.text.toString(),
+                title = tvTrainingTitle.text.toString(),
             )
         } else {
             viewModel.updateTraining(
                 id = training.id,
-                title = trainingTitle.text.toString(),
+                title = tvTrainingTitle.text.toString(),
             )
         }
     }
@@ -122,15 +126,11 @@ class TrainingActivity : ComponentActivity() {
                         currentFocus?.clearFocus()
                     } else {
                         if (backPressed + BACK_PRESS_TIME_MS > System.currentTimeMillis()) {
-                            saveTraining()
                             isEnabled = false
+                            saveOrUpdateTraining()
                             onBackPressedDispatcher.onBackPressed()
                         } else {
-                            Toast.makeText(
-                                this@TrainingActivity,
-                                "Press once again to exit!",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            toast { "Press once again to exit!" }
                         }
                         backPressed = System.currentTimeMillis()
                     }
