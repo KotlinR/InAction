@@ -3,10 +3,10 @@ package com.action.round.ui.screens.training
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,13 +20,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class TrainingActivity : AppCompatActivity() {
 
-    // TODO (
-    //  - навести порядок с List
-    //  - реализовать сохраниение
-    //  - убрать ненужные диалоги
-    //  - вынести инициализацию в отдельные методы
-    //  - пофиксить адаптер и обработку действий с элементами
-    //  )
     companion object {
         private const val KEY_TRAINING = "training"
 
@@ -34,6 +27,8 @@ class TrainingActivity : AppCompatActivity() {
             return Intent(activity, TrainingActivity::class.java).putExtra(KEY_TRAINING, training)
         }
     }
+
+    private var backPressed = 0L
 
     private val fab by lazy { findViewById<FloatingActionButton>(R.id.btnAddRound) }
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvAllRoundsAtTraining) }
@@ -54,6 +49,7 @@ class TrainingActivity : AppCompatActivity() {
         setUpTraining()
         initUI()
         initObserves()
+        setUpBackPress()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -97,6 +93,8 @@ class TrainingActivity : AppCompatActivity() {
         // TODO: request|clear focus
         trainingTitle.text = training?.title
         rounds.text = training?.exercises.orEmpty().size.toString()
+
+        if (trainingTitle.text.isEmpty()) trainingTitle.requestFocus()
     }
 
     private fun initUI() {
@@ -134,5 +132,40 @@ class TrainingActivity : AppCompatActivity() {
         } else {
             @Suppress("DEPRECATION") getParcelableExtra(KEY_TRAINING)
         }
+    }
+
+    private fun saveTraining() {
+        val training = training
+        if (training == null) {
+            viewModel.saveTraining(
+                title = trainingTitle.text.toString(),
+            )
+        } else {
+            viewModel.updateTraining(
+                id = training.id,
+                title = trainingTitle.text.toString(),
+            )
+        }
+    }
+
+    private fun setUpBackPress() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                if (currentFocus != null) {
+                    currentFocus?.clearFocus()
+                } else {
+                    if (backPressed + 2000 > System.currentTimeMillis()) {
+                        saveTraining()
+                        return onBackPressedDispatcher.onBackPressed()
+                    } else {
+                        Toast.makeText(
+                            this@TrainingActivity, "Press once again to exit!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    backPressed = System.currentTimeMillis()
+                }
+            }
+        })
     }
 }

@@ -33,14 +33,14 @@ class LocalExercisesRepository(
     }
 
     fun move(from: Int, to: Int) {
-        modifyExercises { exercises ->
+        modifyExercises(notifyUpdates = false) { exercises ->
             val removedExercise = exercises.removeAt(from)
             exercises.add(to, removedExercise)
         }
     }
 
     fun deleteByPosition(position: Int) {
-        modifyExercises { exercises ->
+        modifyExercises(notifyUpdates = false) { exercises ->
             exercises.removeAt(position)
         }
     }

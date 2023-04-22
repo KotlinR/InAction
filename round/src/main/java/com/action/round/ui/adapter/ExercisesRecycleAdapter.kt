@@ -42,10 +42,13 @@ class ExercisesRecycleAdapter(
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         onMove(fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
     }
 
     override fun onItemDismiss(position: Int) {
         onSwipe(position)
+        notifyItemRemoved(position)
+        // TODO fix notify item
     }
 
     override fun onListUpdate() {
