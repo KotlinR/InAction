@@ -13,6 +13,7 @@ import com.action.round.R
 import com.action.round.data.models.Exercise
 import com.action.round.ui.recycler.ItemTouchHelperAdapter
 import com.action.round.ui.recycler.ItemTouchHelperViewHolder
+import com.action.round.utills.findAndUpdate
 import com.action.round.utills.swap
 
 class TrainingRecycleAdapter(
@@ -29,7 +30,13 @@ class TrainingRecycleAdapter(
             view = LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.item_round, parent, false),
-            onExerciseChange = onExerciseChange,
+            onExerciseChange = { id, newDescription ->
+                currentList.findAndUpdate(
+                    predicate = { it.id == id },
+                    modify = { it.copy(description = newDescription) },
+                )
+                onExerciseChange(id, newDescription)
+            },
         )
     }
 
