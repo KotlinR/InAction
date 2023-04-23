@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
-import com.action.round.data.Training
+import com.action.round.data.models.Training
 
 class MainRecyclerAdapter(
     private val onLongClick: (Training) -> Unit,

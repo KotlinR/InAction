@@ -1,7 +1,9 @@
-package com.action.round.data
+package com.action.round.data.repos
 
+import com.action.round.data.converters.TrainingConverter
 import com.action.round.data.db.TrainingDao
 import com.action.round.data.db.TrainingEntity
+import com.action.round.data.models.Training
 import java.util.concurrent.ExecutorService
 
 class Repository(

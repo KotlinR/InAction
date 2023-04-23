@@ -3,8 +3,8 @@ package com.action.round.ui.screens.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.action.round.data.Repository
-import com.action.round.data.Training
+import com.action.round.data.models.Training
+import com.action.round.data.repos.Repository
 
 class MainViewModel(
     private val repository: Repository,

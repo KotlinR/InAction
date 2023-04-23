@@ -1,7 +1,8 @@
-package com.action.round.data
+package com.action.round.data.repos
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.action.round.data.models.Exercise
 import com.action.round.utills.findAndUpdate
 import com.action.round.utills.swap
 import java.util.concurrent.ExecutorService
@@ -47,12 +48,6 @@ class LocalExercisesRepository(
     fun add() {
         modifyExercises { exercises ->
             exercises.add(Exercise())
-        }
-    }
-
-    fun clear() {
-        modifyExercises { exercises ->
-            exercises.clear()
         }
     }
 

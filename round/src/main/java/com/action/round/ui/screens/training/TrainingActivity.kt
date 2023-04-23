@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
-import com.action.round.data.Training
+import com.action.round.data.models.Training
 import com.action.round.ui.recycler.SimpleItemTouchHelperCallback
 import com.action.round.utills.hideKeyboard
 import com.action.round.utills.toast
@@ -41,7 +41,7 @@ class TrainingActivity : ComponentActivity() {
         dependencies.trainingViewModelFactory
     }
 
-    private var adapter: TraningRecycleAdapter? = null
+    private var adapter: TrainingRecycleAdapter? = null
     private var training: Training? = null
 
     private var backPressed = 0L
@@ -66,7 +66,7 @@ class TrainingActivity : ComponentActivity() {
     }
 
     private fun initUI() {
-        adapter = TraningRecycleAdapter(
+        adapter = TrainingRecycleAdapter(
             onSwipe = { id -> viewModel.deleteExercise(id) },
             onMove = { from, to -> viewModel.moveExercise(from, to) },
             onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) },

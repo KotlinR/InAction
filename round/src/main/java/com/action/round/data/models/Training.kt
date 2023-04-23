@@ -1,4 +1,4 @@
-package com.action.round.data
+package com.action.round.data.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

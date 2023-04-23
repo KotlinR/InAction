@@ -13,6 +13,6 @@ fun <T> MutableList<T>.findAndUpdate(
 }
 
 fun <T> MutableList<T>.swap(from: Int, to: Int) {
-    val removed = removeAt(from)
+    val removed: T = removeAt(from)
     add(to, removed)
 }

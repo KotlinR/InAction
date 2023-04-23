@@ -2,10 +2,10 @@ package com.action.round.ui.screens.training
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.action.round.data.Exercise
-import com.action.round.data.LocalExercisesRepository
-import com.action.round.data.Repository
-import com.action.round.data.Training
+import com.action.round.data.models.Exercise
+import com.action.round.data.models.Training
+import com.action.round.data.repos.LocalExercisesRepository
+import com.action.round.data.repos.Repository
 
 class TrainingViewModel(
     private val repository: Repository,
@@ -17,10 +17,6 @@ class TrainingViewModel(
 
     fun setTraining(training: Training?) {
         localExercisesRepository.setExercises(training?.exercises.orEmpty())
-    }
-
-    fun deleteTraining(training: Training?) {
-        training?.let { repository.delete(it) {} }
     }
 
     fun saveTraining(
@@ -41,10 +37,6 @@ class TrainingViewModel(
             title = title,
             exercises = filledExercises(),
         )
-    }
-
-    fun clearExercises() {
-        localExercisesRepository.clear()
     }
 
     fun addNewExercise() {

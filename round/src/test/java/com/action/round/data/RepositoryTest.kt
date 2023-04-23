@@ -1,7 +1,11 @@
 package com.action.round.data
 
+import com.action.round.data.converters.TrainingConverter
 import com.action.round.data.db.TrainingDao
 import com.action.round.data.db.TrainingEntity
+import com.action.round.data.models.Exercise
+import com.action.round.data.models.Training
+import com.action.round.data.repos.Repository
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

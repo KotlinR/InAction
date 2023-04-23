@@ -10,16 +10,16 @@ import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
-import com.action.round.data.Exercise
+import com.action.round.data.models.Exercise
 import com.action.round.ui.recycler.ItemTouchHelperAdapter
 import com.action.round.ui.recycler.ItemTouchHelperViewHolder
 import com.action.round.utills.swap
 
-class TraningRecycleAdapter(
+class TrainingRecycleAdapter(
     private val onSwipe: (position: Int) -> Unit,
     private val onMove: (from: Int, to: Int) -> Unit,
     private val onExerciseChange: (id: Int, newText: String) -> Unit,
-) : RecyclerView.Adapter<TraningRecycleAdapter.RoundViewHolder>(),
+) : RecyclerView.Adapter<TrainingRecycleAdapter.RoundViewHolder>(),
     ItemTouchHelperAdapter {
 
     private var currentList = mutableListOf<Exercise>()

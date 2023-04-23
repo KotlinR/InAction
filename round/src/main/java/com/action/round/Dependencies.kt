@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.room.Room
-import com.action.round.data.LocalExercisesRepository
-import com.action.round.data.Repository
-import com.action.round.data.TrainingConverter
+import com.action.round.data.converters.TrainingConverter
 import com.action.round.data.db.InActionDatabase
 import com.action.round.data.db.TrainingDao
+import com.action.round.data.repos.LocalExercisesRepository
+import com.action.round.data.repos.Repository
 import com.action.round.ui.screens.main.MainViewModel
 import com.action.round.ui.screens.training.TrainingViewModel
 import java.util.concurrent.Executors

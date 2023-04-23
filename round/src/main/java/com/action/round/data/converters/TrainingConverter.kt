@@ -1,6 +1,8 @@
-package com.action.round.data
+package com.action.round.data.converters
 
 import com.action.round.data.db.TrainingEntity
+import com.action.round.data.models.Exercise
+import com.action.round.data.models.Training
 
 class TrainingConverter {
 
