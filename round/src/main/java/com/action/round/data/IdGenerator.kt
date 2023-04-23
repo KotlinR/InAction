@@ -4,4 +4,5 @@ package com.action.round.data
 object IdGenerator {
     var id: Int = 0
         get() = ++field
+        private set
 }

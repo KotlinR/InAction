@@ -1,6 +1,5 @@
-package com.action.round.data
+package com.action.round.data.converters
 
-import com.action.round.data.converters.ExercisesConverter
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
