@@ -1,6 +1,7 @@
 package com.action.round.ui.screens.training
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.action.round.data.models.Exercise
 import com.action.round.data.models.Training
@@ -14,6 +15,9 @@ class TrainingViewModel(
 
     val exercisesLiveData: LiveData<List<Exercise>> = localExercisesRepository.exercisesLiveData
     val exercisesSize: Int get() = localExercisesRepository.exercises.size
+
+    private val _openSecondScreenLiveData = MutableLiveData<List<Exercise>>()
+    val openSecondScreenLiveData: LiveData<List<Exercise>> = _openSecondScreenLiveData
 
     fun setTraining(training: Training?) {
         localExercisesRepository.setExercises(training?.exercises.orEmpty())
@@ -59,5 +63,9 @@ class TrainingViewModel(
         return localExercisesRepository.exercises.mapNotNull { ex ->
             ex.takeIf { it.description.isNotEmpty() }?.description
         }
+    }
+
+    fun openTimerScreen() {
+        _openSecondScreenLiveData.value = exercisesLiveData.value
     }
 }

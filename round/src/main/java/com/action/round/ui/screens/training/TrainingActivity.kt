@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -15,6 +16,7 @@ import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
 import com.action.round.data.models.Training
 import com.action.round.ui.recycler.SimpleItemTouchHelperCallback
+import com.action.round.ui.screens.timer.TimerActivity
 import com.action.round.utills.hideKeyboard
 import com.action.round.utills.toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -36,6 +38,7 @@ class TrainingActivity : ComponentActivity() {
     private val tvTrainingTitle by lazy { findViewById<TextView>(R.id.etTrainingTitle) }
     private val tvRounds by lazy { findViewById<TextView>(R.id.tvRounds) }
     private val rootView by lazy { findViewById<ViewGroup>(R.id.rootView) }
+    private val btnStartTraining by lazy { findViewById<Button>(R.id.btnStartTraining) }
 
     private val viewModel: TrainingViewModel by viewModels {
         dependencies.trainingViewModelFactory
@@ -84,6 +87,10 @@ class TrainingActivity : ComponentActivity() {
             }
         }
 
+        btnStartTraining.setOnClickListener {
+            viewModel.openTimerScreen()
+        }
+
         rootView.setOnClickListener(View::hideKeyboard)
     }
 
@@ -91,6 +98,15 @@ class TrainingActivity : ComponentActivity() {
         viewModel.exercisesLiveData.observe(this) { exercises ->
             adapter?.submitList(exercises.orEmpty())
             tvRounds?.text = exercises.orEmpty().size.toString()
+            btnStartTraining.isEnabled = exercises.isNotEmpty()
+        }
+
+        viewModel.openSecondScreenLiveData.observe(this) { exercises ->
+            if (exercises.isNotEmpty()) {
+                val training =
+                    Training(title = tvTrainingTitle.text.toString(), exercises = exercises)
+                startActivity(TimerActivity.buildIntent(this, training = training))
+            }
         }
     }
 

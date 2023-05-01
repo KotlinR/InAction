@@ -10,4 +10,5 @@
     <color name="gray_blue">#718DA3</color>
     <color name="classic_yellow">#FFC107</color>
     <color name="coral">#FFF44336</color>
+    <color name="training_title_text_color">#03A9F4</color>
 </resources>

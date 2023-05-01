@@ -18,6 +18,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_input_add" />
 
+    <TextView
+        android:id="@+id/tvRounds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@id/rvAllRoundsAtTraining"
+        app:layout_constraintEnd_toStartOf="@id/etTrainingTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/etTrainingTitle"
         android:layout_width="wrap_content"
@@ -36,15 +47,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvRounds"
+    <Button
+        android:id="@+id/btnStartTraining"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:gravity="center"
+        android:pointerIcon="arrow"
+        android:text="GO"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@id/rvAllRoundsAtTraining"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/etTrainingTitle"
+        app:layout_constraintStart_toEndOf="@id/etTrainingTitle"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView

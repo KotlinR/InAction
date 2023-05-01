@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.screens.timer.TimerActivity"
+    tools:ignore="ContentDescription">
+
+    <TextView
+        android:id="@+id/tvAllRounds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="16"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@id/tvTrainingTitle"
+        app:layout_constraintEnd_toStartOf="@id/tvTrainingTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvTrainingTitle" />
+
+    <TextView
+        android:id="@+id/tvTrainingTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:hint="@string/title_of_training"
+        android:text="@string/title_of_training"
+        android:textColor="@color/training_title_text_color"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@id/tvRound"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnSettingTimer"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="10dp"
+        android:src="@android:drawable/ic_menu_manage"
+        app:layout_constraintBottom_toBottomOf="@id/tvTrainingTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvTrainingTitle"
+        app:layout_constraintTop_toTopOf="@id/tvTrainingTitle" />
+
+    <TextView
+        android:id="@+id/tvRound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="ROUND 3"
+        android:textColor="@color/classic_yellow"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@id/tvDisplayTimer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTrainingTitle" />
+
+    <TextView
+        android:id="@+id/tvDisplayTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:gravity="center"
+        android:padding="0dp"
+        android:text="02:47"
+        android:textColor="@color/teal_200"
+        android:textSize="130sp"
+        app:layout_constraintBottom_toTopOf="@id/tvActualExercise"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvRound" />
+
+    <TextView
+        android:id="@+id/tvActualExercise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="1) Дал + дал + ушёл\n2) Уворот + переворот\n3) Левый-коронный + Правый-похоронный"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/btnStartAndPause"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDisplayTimer" />
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@android:drawable/ic_media_previous"
+        app:layout_constraintBottom_toBottomOf="@id/btnStartAndPause"
+        app:layout_constraintEnd_toStartOf="@id/btnStartAndPause"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnStartAndPause" />
+
+    <ImageView
+        android:id="@+id/btnStartAndPause"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginVertical="20dp"
+        android:src="@android:drawable/ic_media_play"
+        app:layout_constraintBottom_toTopOf="@id/rvRoundsAtTraining"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvActualExercise" />
+
+    <ImageView
+        android:id="@+id/btnNext"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@android:drawable/ic_media_next"
+        app:layout_constraintBottom_toBottomOf="@id/btnStartAndPause"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnStartAndPause"
+        app:layout_constraintTop_toTopOf="@id/btnStartAndPause" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRoundsAtTraining"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnStartAndPause"
+        tools:listitem="@layout/item_round" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

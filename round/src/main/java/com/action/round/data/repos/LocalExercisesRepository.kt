@@ -40,7 +40,8 @@ class LocalExercisesRepository(
     }
 
     fun deleteByPosition(position: Int) {
-        modifyExercises(notifyUpdates = false) { exercises ->
+        // TODO (поменял false на true, посмотреть потом)
+        modifyExercises(notifyUpdates = true) { exercises ->
             exercises.removeAt(position)
         }
     }
