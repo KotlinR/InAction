@@ -8,27 +8,28 @@
     tools:ignore="ContentDescription">
 
     <TextView
-        android:id="@+id/tvAllRounds"
+        android:id="@+id/tvRoundsInTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="16"
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="@id/tvTrainingTitle"
-        app:layout_constraintEnd_toStartOf="@id/tvTrainingTitle"
+        app:layout_constraintBottom_toBottomOf="@id/tvTrainingTitleInTimer"
+        app:layout_constraintEnd_toStartOf="@id/tvTrainingTitleInTimer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvTrainingTitle" />
+        app:layout_constraintTop_toTopOf="@id/tvTrainingTitleInTimer" />
 
     <TextView
-        android:id="@+id/tvTrainingTitle"
+        android:id="@+id/tvTrainingTitleInTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="@string/title_of_training"
         android:text="@string/title_of_training"
+        android:gravity="center"
         android:textColor="@color/training_title_text_color"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@id/tvRound"
+        app:layout_constraintBottom_toTopOf="@id/tvActualRound"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -39,13 +40,13 @@
         android:layout_height="48dp"
         android:layout_margin="10dp"
         android:src="@android:drawable/ic_menu_manage"
-        app:layout_constraintBottom_toBottomOf="@id/tvTrainingTitle"
+        app:layout_constraintBottom_toBottomOf="@id/tvTrainingTitleInTimer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tvTrainingTitle"
-        app:layout_constraintTop_toTopOf="@id/tvTrainingTitle" />
+        app:layout_constraintStart_toEndOf="@id/tvTrainingTitleInTimer"
+        app:layout_constraintTop_toTopOf="@id/tvTrainingTitleInTimer" />
 
     <TextView
-        android:id="@+id/tvRound"
+        android:id="@+id/tvActualRound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
@@ -57,7 +58,7 @@
         app:layout_constraintBottom_toTopOf="@id/tvDisplayTimer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTrainingTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTrainingTitleInTimer" />
 
     <TextView
         android:id="@+id/tvDisplayTimer"
@@ -66,13 +67,13 @@
         android:layout_marginHorizontal="10dp"
         android:gravity="center"
         android:padding="0dp"
-        android:text="02:47"
+        android:text="00:00"
         android:textColor="@color/teal_200"
         android:textSize="130sp"
         app:layout_constraintBottom_toTopOf="@id/tvActualExercise"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvRound" />
+        app:layout_constraintTop_toBottomOf="@id/tvActualRound" />
 
     <TextView
         android:id="@+id/tvActualExercise"
@@ -103,7 +104,7 @@
         android:layout_height="48dp"
         android:layout_marginVertical="20dp"
         android:src="@android:drawable/ic_media_play"
-        app:layout_constraintBottom_toTopOf="@id/rvRoundsAtTraining"
+        app:layout_constraintBottom_toTopOf="@id/rvPreviewRounds"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvActualExercise" />
@@ -119,7 +120,7 @@
         app:layout_constraintTop_toTopOf="@id/btnStartAndPause" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvRoundsAtTraining"
+        android:id="@+id/rvPreviewRounds"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"

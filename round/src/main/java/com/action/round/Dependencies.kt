@@ -11,10 +11,13 @@ import com.action.round.data.db.TrainingDao
 import com.action.round.data.repos.LocalExercisesRepository
 import com.action.round.data.repos.Repository
 import com.action.round.ui.screens.main.MainViewModel
+import com.action.round.ui.screens.timer.Timer
+import com.action.round.ui.screens.timer.TimerParametersRepository
+import com.action.round.ui.screens.timer.TimerViewModel
 import com.action.round.ui.screens.training.TrainingViewModel
 import java.util.concurrent.Executors
 
-class Dependencies(context: Context) {
+class Dependencies(private val context: Context) {
     companion object {
         val Context.dependencies: Dependencies
             get() = when (this) {
@@ -42,10 +45,17 @@ class Dependencies(context: Context) {
             }
         }
 
+    val timerViewModelFactory: ViewModelProvider.Factory
+        get() = viewModelFactory {
+            initializer {
+                TimerViewModel(timer)
+            }
+        }
+
     private val db: InActionDatabase = Room.databaseBuilder(
-        context,
-        InActionDatabase::class.java,
-        DATABASE_NAME,
+        context = context,
+        klass = InActionDatabase::class.java,
+        name = DATABASE_NAME,
     ).build()
 
     private val repository: Repository
@@ -64,5 +74,15 @@ class Dependencies(context: Context) {
     private val localExercisesRepository: LocalExercisesRepository
         get() = LocalExercisesRepository(
             es = Executors.newSingleThreadExecutor(),
+        )
+
+    private val timer: Timer
+        get() = Timer(
+            es = Executors.newCachedThreadPool(),
+            timerParametersRepository = timerParametersRepository
+        )
+    private val timerParametersRepository: TimerParametersRepository
+        get() = TimerParametersRepository(
+            context = context
         )
 }

@@ -1,8 +1,8 @@
 package com.action.round.ui.screens.main
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
@@ -10,7 +10,7 @@ import com.action.round.R
 import com.action.round.ui.screens.training.TrainingActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
 
     private val fab by lazy { findViewById<FloatingActionButton>(R.id.btnAddTraining) }
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvAllTrainingsList) }

@@ -17,9 +17,10 @@ import com.action.round.utills.findAndUpdate
 import com.action.round.utills.swap
 
 class TrainingRecycleAdapter(
-    private val onSwipe: (position: Int) -> Unit,
-    private val onMove: (from: Int, to: Int) -> Unit,
-    private val onExerciseChange: (id: Int, newText: String) -> Unit,
+    private val onSwipe: ((position: Int) -> Unit)?,
+    private val onMove: ((from: Int, to: Int) -> Unit)?,
+    private val onExerciseChange: ((id: Int, newText: String) -> Unit)?,
+    private val onLongClick: ((id: Int) -> Unit)?,
 ) : RecyclerView.Adapter<TrainingRecycleAdapter.RoundViewHolder>(),
     ItemTouchHelperAdapter {
 
@@ -35,8 +36,9 @@ class TrainingRecycleAdapter(
                     predicate = { it.id == id },
                     modify = { it.copy(description = newDescription) },
                 )
-                onExerciseChange(id, newDescription)
+                onExerciseChange?.invoke(id, newDescription)
             },
+            onLongClick = onLongClick
         )
     }
 
@@ -52,13 +54,13 @@ class TrainingRecycleAdapter(
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
-        onMove(fromPosition, toPosition)
+        onMove?.invoke(fromPosition, toPosition)
         currentList.swap(fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
     override fun onItemDismiss(position: Int) {
-        onSwipe(position)
+        onSwipe?.invoke(position)
         currentList.removeAt(position)
         notifyItemRemoved(position)
     }
@@ -75,7 +77,8 @@ class TrainingRecycleAdapter(
 
     class RoundViewHolder(
         private val view: View,
-        private val onExerciseChange: (id: Int, newText: String) -> Unit,
+        private val onExerciseChange: ((id: Int, newText: String) -> Unit)?,
+        private val onLongClick: ((id: Int) -> Unit)?,
     ) : RecyclerView.ViewHolder(view), ItemTouchHelperViewHolder {
 
         override fun onItemSelected() {
@@ -90,11 +93,25 @@ class TrainingRecycleAdapter(
             view.apply {
                 val text = "Round [ ${adapterPosition + 1} ]"
                 findViewById<TextView>(R.id.tvRoundOfTraining).text = text
-                findViewById<EditText>(R.id.etExerciseOfTraining).apply {
-                    setText(exercise.description)
-                    setSelection(exercise.description.length)
-                    doAfterTextChanged {
-                        onExerciseChange(exercise.id, it?.toString().orEmpty())
+                if (onLongClick != null) {
+                    findViewById<EditText>(R.id.etExerciseOfTraining).apply {
+                        isClickable = false
+                        isFocusable = false
+                        isCursorVisible = false
+                        isLongClickable = false
+                        isClickable = false
+                        isEnabled = false
+                        isFocusableInTouchMode = false
+                        setOnKeyListener(null)
+                        setText(exercise.description)
+                    }
+                } else {
+                    findViewById<EditText>(R.id.etExerciseOfTraining).apply {
+                        setText(exercise.description)
+                        setSelection(exercise.description.length)
+                        doAfterTextChanged {
+                            onExerciseChange?.invoke(exercise.id, it?.toString().orEmpty())
+                        }
                     }
                 }
             }

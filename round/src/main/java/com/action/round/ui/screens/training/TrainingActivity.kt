@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
@@ -28,7 +27,7 @@ class TrainingActivity : ComponentActivity() {
         private const val BACK_PRESS_TIME_MS = 2000L
         private const val MAX_NUMBER_OF_ROUND = 16
 
-        fun buildIntent(activity: AppCompatActivity, training: Training?): Intent {
+        fun buildIntent(activity: ComponentActivity, training: Training?): Intent {
             return Intent(activity, TrainingActivity::class.java).putExtra(KEY_TRAINING, training)
         }
     }
@@ -73,6 +72,7 @@ class TrainingActivity : ComponentActivity() {
             onSwipe = { id -> viewModel.deleteExercise(id) },
             onMove = { from, to -> viewModel.moveExercise(from, to) },
             onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) },
+            onLongClick = null,
         ).also {
             ItemTouchHelper(SimpleItemTouchHelperCallback(it)).attachToRecyclerView(recyclerView)
             recyclerView.adapter = it
