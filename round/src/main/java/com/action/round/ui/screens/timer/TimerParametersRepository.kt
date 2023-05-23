@@ -1,113 +1,81 @@
 package com.action.round.ui.screens.timer
 
 import android.content.Context
-import android.content.SharedPreferences
 
 class TimerParametersRepository(
     private val context: Context,
 ) {
 
     companion object {
-        private const val APP_SP_COUNTDOWN = "countdown"
-        private const val APP_SP_ROUND = "round"
-        private const val APP_SP_RELAX = "relax"
-        private const val APP_SP_PRE_START = "pre_start"
-        private const val APP_SP_PRE_STOP = "pre_stop"
-        private const val APP_SP_TOTAL_ROUNDS = "total_rounds"
+        private const val APP_SP_TIME_PARAMETERS = "time_parameters"
 
-        private const val SAVED_TOTAL_ROUNDS = "saved_total_rounds"
-        private const val SAVED_TIME = "saved_time"
+        private const val COUNTDOWN = "countdown"
+        private const val ROUND = "round"
+        private const val RELAX = "relax"
+        private const val PRE_START = "pre_start"
+        private const val PRE_STOP = "pre_stop"
+        private const val TOTAL_ROUNDS = "total_rounds"
     }
 
-    private val timeCountdownSP by lazy {
+    private val timeParametersSP by lazy {
         context.getSharedPreferences(
-            APP_SP_COUNTDOWN,
-            Context.MODE_PRIVATE,
-        )
-    }
-    private val timeRoundSP by lazy {
-        context.getSharedPreferences(
-            APP_SP_ROUND,
-            Context.MODE_PRIVATE,
-        )
-    }
-    private val timeRelaxSP by lazy {
-        context.getSharedPreferences(
-            APP_SP_RELAX,
-            Context.MODE_PRIVATE,
-        )
-    }
-    private val timePreStarSP by lazy {
-        context.getSharedPreferences(
-            APP_SP_PRE_START,
-            Context.MODE_PRIVATE,
-        )
-    }
-    private val timePreStopSP by lazy {
-        context.getSharedPreferences(
-            APP_SP_PRE_STOP,
-            Context.MODE_PRIVATE,
-        )
-    }
-    private val totalRoundsSP by lazy {
-        context.getSharedPreferences(
-            APP_SP_TOTAL_ROUNDS,
+            APP_SP_TIME_PARAMETERS,
             Context.MODE_PRIVATE,
         )
     }
 
     fun saveTimeCountdown(time: Int) {
-        timeCountdownSP.saveSP(time)
+        saveTimerParameterSP(COUNTDOWN, time)
     }
 
     fun saveTimeRound(time: Int) {
-        timeRoundSP.saveSP(time)
+        saveTimerParameterSP(ROUND, time)
     }
 
     fun saveTimeRelax(time: Int) {
-        timeRelaxSP.saveSP(time)
+        saveTimerParameterSP(RELAX, time)
     }
 
     fun saveTimePreStart(time: Int) {
-        timePreStarSP.saveSP(time)
+        saveTimerParameterSP(PRE_START, time)
     }
 
     fun saveTimePreStop(time: Int) {
-        timePreStopSP.saveSP(time)
+        saveTimerParameterSP(PRE_STOP, time)
     }
 
     fun saveTotalRounds(totalRounds: Int) {
-        totalRoundsSP.saveSP(totalRounds)
+        saveTimerParameterSP(TOTAL_ROUNDS, totalRounds)
     }
 
-    private fun SharedPreferences.saveSP(parameter: Int) {
-        this
+    private fun saveTimerParameterSP(key: String, parameter: Int) {
+        timeParametersSP
             .edit()
-            .putInt(SAVED_TIME, parameter)
+            .putInt(key, parameter)
             .apply()
     }
 
     fun loadTimeCountdown(): Int {
-        return timeCountdownSP.getInt(SAVED_TIME, 0)
+        return timeParametersSP.getInt(COUNTDOWN, 0)
     }
 
     fun loadTimeRound(): Int {
-        return timeRoundSP.getInt(SAVED_TIME, 180)
+        return timeParametersSP.getInt(ROUND, 180)
     }
 
     fun loadTimeRelax(): Int {
-        return timeRelaxSP.getInt(SAVED_TIME, 60)
+        return timeParametersSP.getInt(RELAX, 60)
     }
 
     fun loadTimePreStart(): Int {
-        return timePreStarSP.getInt(SAVED_TIME, 0)
+        return timeParametersSP.getInt(PRE_START, 0)
     }
 
     fun loadTimePreStop(): Int {
-        return timePreStopSP.getInt(SAVED_TIME, 0)
+        return timeParametersSP.getInt(PRE_STOP, 0)
     }
 
     fun loadTotalRounds(): Int {
-        return totalRoundsSP.getInt(SAVED_TOTAL_ROUNDS, 1)
+        return timeParametersSP.getInt(TOTAL_ROUNDS, 1)
     }
 }
