@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import com.action.round.data.models.Exercise
 import com.action.round.data.models.Training
 import com.action.round.data.repos.LocalExercisesRepository
-import com.action.round.data.repos.Repository
+import com.action.round.data.repos.TrainingRepository
 
 class TrainingViewModel(
-    private val repository: Repository,
+    private val trainingRepository: TrainingRepository,
     private val localExercisesRepository: LocalExercisesRepository,
 ) : ViewModel() {
 
@@ -26,7 +26,7 @@ class TrainingViewModel(
     fun saveTraining(
         title: String,
     ) {
-        repository.save(
+        trainingRepository.save(
             title = title,
             exercises = filledExercises(),
         )
@@ -36,7 +36,7 @@ class TrainingViewModel(
         id: Int,
         title: String,
     ) {
-        repository.update(
+        trainingRepository.update(
             id = id,
             title = title,
             exercises = filledExercises(),

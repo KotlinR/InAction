@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.action.round.data.models.Training
-import com.action.round.data.repos.Repository
+import com.action.round.data.repos.TrainingRepository
 
 class MainViewModel(
-    private val repository: Repository,
+    private val trainingRepository: TrainingRepository,
 ) : ViewModel() {
 
     private val _trainingsLiveData = MutableLiveData<List<Training>>()
@@ -21,7 +21,7 @@ class MainViewModel(
     }
 
     fun getAllTrainings() {
-        repository.getAll { trainings ->
+        trainingRepository.getAll { trainings ->
             _trainingsLiveData.postValue(trainings)
         }
     }
@@ -31,7 +31,7 @@ class MainViewModel(
     }
 
     fun deleteTraining(training: Training) {
-        repository.delete(training) { updatedTrainings ->
+        trainingRepository.delete(training) { updatedTrainings ->
             _trainingsLiveData.postValue(updatedTrainings)
         }
     }

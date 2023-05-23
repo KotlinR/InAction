@@ -6,8 +6,12 @@ import androidx.room.TypeConverters
 import com.action.round.data.converters.ExercisesConverter
 
 
-@Database(entities = [TrainingEntity::class], version = 1)
+@Database(
+    entities = [TrainingEntity::class, TimerParametersEntity::class],
+    version = 1
+)
 @TypeConverters(ExercisesConverter::class)
 abstract class InActionDatabase : RoomDatabase() {
     abstract fun trainingDao(): TrainingDao
+    abstract fun timerParametersDao(): TimerParametersDao
 }

@@ -2,6 +2,8 @@ package com.action.round.ui.screens.timer
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.action.round.data.models.TimerParameters
+import com.action.round.data.repos.TimerParametersRepository
 import java.util.concurrent.ExecutorService
 
 class Timer(
@@ -43,7 +45,7 @@ class Timer(
         }
     }
 
-    fun saveTimeParameters(
+    fun resetTimeParameters(
         totalRounds: Int?,
         countdown: Int,
         round: Int,
@@ -52,30 +54,12 @@ class Timer(
         preStop: Int,
     ) {
         es.execute {
-            if (countdown != timerParameters.countdown) {
-                timerParametersRepository.saveTimeCountdown(countdown)
-                _timerParameters.countdown = countdown
-            }
-            if (round != timerParameters.countdown) {
-                timerParametersRepository.saveTimeRound(round)
-                _timerParameters.round = round
-            }
-            if (relax != timerParameters.relax) {
-                timerParametersRepository.saveTimeRelax(relax)
-                _timerParameters.relax = relax
-            }
-            if (preStart != timerParameters.preStart) {
-                timerParametersRepository.saveTimePreStart(preStart)
-                _timerParameters.preStart = preStart
-            }
-            if (preStop != timerParameters.preStop) {
-                timerParametersRepository.saveTimePreStop(preStop)
-                _timerParameters.preStop = preStop
-            }
-            if (totalRounds != null) {
-                timerParametersRepository.saveTotalRounds(totalRounds)
-                _timerParameters.round = totalRounds
-            }
+            if (countdown != timerParameters.countdown) _timerParameters.countdown = countdown
+            if (round != timerParameters.countdown) _timerParameters.round = round
+            if (relax != timerParameters.relax) _timerParameters.relax = relax
+            if (preStart != timerParameters.preStart) _timerParameters.preStart = preStart
+            if (preStop != timerParameters.preStop) _timerParameters.preStop = preStop
+            if (totalRounds != null) _timerParameters.round = totalRounds
         }
     }
 
@@ -166,14 +150,24 @@ class Timer(
         }
     }
 
-    private fun setTimerParameters() {
-        _timerParameters.countdown = timerParametersRepository.loadTimeCountdown()
-        _havingCountdown = timerParameters.countdown != 0
+    fun updateTimerParameters() {
+        timerParametersRepository.updateTimerParameters(timerParameters)
+    }
 
-        _timerParameters.round = timerParametersRepository.loadTimeRound()
-        _timerParameters.relax = timerParametersRepository.loadTimeRelax()
-        _timerParameters.preStart = timerParametersRepository.loadTimePreStart()
-        _timerParameters.preStop = timerParametersRepository.loadTimePreStop()
+    private fun setTimerParameters() {
+        timerParametersRepository.getTimerParameters { parameters ->
+            parameters?.let {
+                _timerParameters.apply {
+                    countdown = parameters.countdown
+                    round = parameters.round
+                    relax = parameters.relax
+                    preStart = parameters.preStart
+                    preStop = parameters.preStop
+                    round = parameters.totalRounds
+                }
+            }
+        }
+        _havingCountdown = timerParameters.countdown != 0
     }
 
     private fun setTotalRoundsAndRelax(rounds: Int?) {
@@ -181,7 +175,7 @@ class Timer(
             _totalRounds = rounds
             _totalRelax = rounds - 1
         } else {
-            _totalRounds = timerParametersRepository.loadTotalRounds()
+            _totalRounds = _timerParameters.totalRounds
             _totalRelax = totalRounds - 1
         }
     }

@@ -32,7 +32,7 @@ class TimerViewModel(
     fun loadTimerParameters() {
     }
 
-    fun saveTimerParameters(
+    fun resetTimerParameters(
         totalRounds: Int?,
         countdown: Int,
         round: Int,
@@ -40,6 +40,10 @@ class TimerViewModel(
         preStart: Int,
         preStop: Int,
     ) {
-        timer.saveTimeParameters(totalRounds, countdown, round, relax, preStart, preStop)
+        timer.resetTimeParameters(totalRounds, countdown, round, relax, preStart, preStop)
+    }
+
+    fun updateTimerParametersDB() {
+        timer.updateTimerParameters()
     }
 }

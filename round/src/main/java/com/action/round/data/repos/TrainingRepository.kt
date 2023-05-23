@@ -6,7 +6,7 @@ import com.action.round.data.db.TrainingEntity
 import com.action.round.data.models.Training
 import java.util.concurrent.ExecutorService
 
-class Repository(
+class TrainingRepository(
     private val trainingDao: TrainingDao,
     private val es: ExecutorService,
     private val trainingConverter: TrainingConverter,

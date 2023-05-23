@@ -12,9 +12,9 @@ import org.mockito.kotlin.*
 import java.util.concurrent.ExecutorService
 import kotlin.properties.Delegates
 
-class RepositoryTest {
+class TrainingRepositoryTest {
 
-    private var sut: Repository by Delegates.notNull()
+    private var sut: TrainingRepository by Delegates.notNull()
 
     private val entities = listOf(
         TrainingEntity(
@@ -60,7 +60,7 @@ class RepositoryTest {
 
     @Before
     fun setUp() {
-        sut = Repository(
+        sut = TrainingRepository(
             trainingConverter = mockTrainingConverter,
             trainingDao = mockTrainingDao,
             es = mockExecutorService,

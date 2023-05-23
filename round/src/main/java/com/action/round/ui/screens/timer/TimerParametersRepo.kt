@@ -2,19 +2,19 @@ package com.action.round.ui.screens.timer
 
 import android.content.Context
 
-class TimerParametersRepository(
+class TimerParametersRepo(
     private val context: Context,
 ) {
 
-    companion object {
-        private const val APP_SP_TIME_PARAMETERS = "time_parameters"
+    private companion object {
+        const val APP_SP_TIME_PARAMETERS = "time_parameters"
 
-        private const val COUNTDOWN = "countdown"
-        private const val ROUND = "round"
-        private const val RELAX = "relax"
-        private const val PRE_START = "pre_start"
-        private const val PRE_STOP = "pre_stop"
-        private const val TOTAL_ROUNDS = "total_rounds"
+        const val COUNTDOWN = "countdown"
+        const val ROUND = "round"
+        const val RELAX = "relax"
+        const val PRE_START = "pre_start"
+        const val PRE_STOP = "pre_stop"
+        const val TOTAL_ROUNDS = "total_rounds"
     }
 
     private val timeParametersSP by lazy {

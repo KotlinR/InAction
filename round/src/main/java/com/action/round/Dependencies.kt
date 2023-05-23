@@ -5,14 +5,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.room.Room
+import com.action.round.data.converters.TimerParametersConverter
 import com.action.round.data.converters.TrainingConverter
 import com.action.round.data.db.InActionDatabase
+import com.action.round.data.db.TimerParametersDao
 import com.action.round.data.db.TrainingDao
 import com.action.round.data.repos.LocalExercisesRepository
-import com.action.round.data.repos.Repository
+import com.action.round.data.repos.TimerParametersRepository
+import com.action.round.data.repos.TrainingRepository
 import com.action.round.ui.screens.main.MainViewModel
 import com.action.round.ui.screens.timer.Timer
-import com.action.round.ui.screens.timer.TimerParametersRepository
 import com.action.round.ui.screens.timer.TimerViewModel
 import com.action.round.ui.screens.training.TrainingViewModel
 import java.util.concurrent.Executors
@@ -31,7 +33,7 @@ class Dependencies(private val context: Context) {
     val mainViewModelFactory: ViewModelProvider.Factory
         get() = viewModelFactory {
             initializer {
-                MainViewModel(repository)
+                MainViewModel(trainingRepository)
             }
         }
 
@@ -39,7 +41,7 @@ class Dependencies(private val context: Context) {
         get() = viewModelFactory {
             initializer {
                 TrainingViewModel(
-                    repository = repository,
+                    trainingRepository = trainingRepository,
                     localExercisesRepository = localExercisesRepository,
                 )
             }
@@ -58,9 +60,9 @@ class Dependencies(private val context: Context) {
         name = DATABASE_NAME,
     ).build()
 
-    private val repository: Repository
-        get() = Repository(
-            trainingDao = dao,
+    private val trainingRepository: TrainingRepository
+        get() = TrainingRepository(
+            trainingDao = trainingDao,
             es = Executors.newSingleThreadExecutor(),
             trainingConverter = trainingConverter,
         )
@@ -68,7 +70,7 @@ class Dependencies(private val context: Context) {
     private val trainingConverter: TrainingConverter
         get() = TrainingConverter()
 
-    private val dao: TrainingDao
+    private val trainingDao: TrainingDao
         get() = db.trainingDao()
 
     private val localExercisesRepository: LocalExercisesRepository
@@ -81,8 +83,17 @@ class Dependencies(private val context: Context) {
             es = Executors.newCachedThreadPool(),
             timerParametersRepository = timerParametersRepository
         )
+
     private val timerParametersRepository: TimerParametersRepository
         get() = TimerParametersRepository(
-            context = context
+            timerParametersDao = timerParametersDao,
+            es = Executors.newSingleThreadExecutor(),
+            timerParametersConverter = timerParametersConverter
         )
+
+    private val timerParametersConverter: TimerParametersConverter
+        get() = TimerParametersConverter()
+
+    private val timerParametersDao: TimerParametersDao
+        get() = db.timerParametersDao()
 }
