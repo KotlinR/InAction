@@ -1,6 +1,8 @@
 package com.action.round.ui.screens.timer
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
@@ -11,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
+import com.action.round.data.models.Exercise
 import com.action.round.data.models.Training
 import com.action.round.ui.screens.training.TrainingRecycleAdapter
 import com.action.round.utills.toast
@@ -42,8 +45,13 @@ class TimerActivity : ComponentActivity() {
         dependencies.timerViewModelFactory
     }
 
+    private val gray = Color.DKGRAY
+    private val timerActivity = this
+
     private var adapter: TrainingRecycleAdapter? = null
     private var training: Training? = null
+    private var totalRounds: Int? = null
+    private var exercises: List<Exercise>? = null
 
     private var backPressed = 0L
 
@@ -59,9 +67,11 @@ class TimerActivity : ComponentActivity() {
 
     private fun setUpTraining() {
         training = intent.getTraining()
-        viewModel.setTraining(training)
+        exercises = training?.exercises
+        totalRounds = exercises?.size
+        viewModel.setTraining(totalRounds = totalRounds)
         tvTrainingTitleInTimer.text = training?.title
-        tvRoundsInTimer.text = training?.exercises.orEmpty().size.toString()
+        tvRoundsInTimer.text = exercises.orEmpty().size.toString()
     }
 
     private fun Intent.getTraining(): Training? {
@@ -72,61 +82,84 @@ class TimerActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initUI() {
         adapter = TrainingRecycleAdapter(
             onSwipe = null,
             onMove = null,
             onExerciseChange = null,
-            onLongClick = { viewModel.pauseTraining() },
+            onLongClick = { round ->
+                if (!viewModel.trainingStatus) viewModel.startFromThisRound(
+                    totalRounds = totalRounds,
+                    numberRound = round,
+                )
+            },
         )
+        adapter?.submitList(exercises.orEmpty())
         recyclerView.adapter = adapter
+
+        tvActualRound.text = "Start you training!"
+        tvActualExercise.text = exercises?.get(0)?.description.orEmpty()
 
         btnSettingTimer.setOnClickListener {
             // TODO (
             //  при открытии установить параметры из SP
             //  при закрытии сохранить только измененые параметры
+            //  учитываем статус тренировки true/false
             //  )
         }
 
-        btnStartAndPause.setOnClickListener {
-            if (!viewModel.trainingStatus) {
-                btnStartAndPause.setImageResource(android.R.drawable.ic_media_pause)
-                viewModel.startTraining()
-            } else {
+        btnStartAndPause.apply {
+            setOnClickListener {
+                if (!viewModel.trainingStatus) {
+                    btnStartAndPause.setImageResource(android.R.drawable.ic_media_pause)
+                    btnNext.makeMuted()
+                    btnBack.makeMuted()
+                    btnSettingTimer.makeMuted()
+                    viewModel.startTraining()
+                } else {
+                    toast { "Hold long to stop" }
+                }
+            }
+            setOnLongClickListener {
                 btnStartAndPause.setImageResource(android.R.drawable.ic_media_play)
                 viewModel.pauseTraining()
+                btnNext.makeActive()
+                btnBack.makeActive()
+                btnSettingTimer.makeActive()
+                toast { "Training paused" }
+                true
             }
         }
 
-        btnBack.setOnClickListener {
-            // todo ( плюсуем раунда, отматываем эксерсайс)
+        btnBack.apply {
+            setOnClickListener {
+                if (!viewModel.trainingStatus) viewModel.back(totalRounds)
+            }
+            setOnLongClickListener {
+                if (!viewModel.trainingStatus) viewModel.resetToStart(totalRounds)
+                toast { "Training from the beginning" }
+                true
+            }
         }
 
         btnNext.setOnClickListener {
-            // todo ( минусуем раунда, проматываем эксерсайс)
+            if (!viewModel.trainingStatus) viewModel.next(totalRounds)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initObserves() {
-        // TODO (
-        //  обновляем:
-        //      - время боя
-        //      - время отдыха
-        //      - заменяем их друг на друга, меняя цвет
-        //      - задания на раунд
-        //      )
 
-        viewModel.actualTimeLiveData.observe(this) { actualTime ->
-            tvDisplayTimer.text = actualTime
-        }
-
-
-        // TODO (переделать и учесть тренировку как null, может и не надо вовсе)
-        viewModel.trainingLiveData.observe(this) { training ->
-            adapter?.submitList(training?.exercises.orEmpty())
-            tvRoundsInTimer.text = training?.exercises?.size.toString()
-            tvActualExercise.text = training?.exercises?.get(0)?.description.orEmpty()
-            tvActualRound.text = "ROUND 1"
+        viewModel.apply {
+            actualTimeLiveData.observe(timerActivity) { actualTime ->
+                tvDisplayTimer.text = actualTime
+            }
+            actualRoundLiveData.observe(timerActivity) { actualRound ->
+                tvActualRound.text = actualRound.second
+                tvActualExercise.text = exercises?.get(actualRound.first - 1)?.description.orEmpty()
+                recyclerView.scrollToPosition(actualRound.first - 1)
+            }
         }
     }
 
@@ -147,5 +180,15 @@ class TimerActivity : ComponentActivity() {
                 }
             }
         )
+    }
+
+    private fun ImageView.makeMuted() {
+        this.isEnabled = false
+        setColorFilter(gray)
+    }
+
+    private fun ImageView.makeActive() {
+        this.isEnabled = true
+        clearColorFilter()
     }
 }

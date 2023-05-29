@@ -18,7 +18,8 @@ class MainRecyclerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrainingViewHolder {
         return TrainingViewHolder(
-            itemView = LayoutInflater.from(parent.context)
+            itemView = LayoutInflater
+                .from(parent.context)
                 .inflate(R.layout.item_training, parent, false),
             onLongClick = onLongClick,
             onClick = onClick,

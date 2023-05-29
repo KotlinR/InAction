@@ -20,7 +20,7 @@ class TrainingRecycleAdapter(
     private val onSwipe: ((position: Int) -> Unit)?,
     private val onMove: ((from: Int, to: Int) -> Unit)?,
     private val onExerciseChange: ((id: Int, newText: String) -> Unit)?,
-    private val onLongClick: ((id: Int) -> Unit)?,
+    private val onLongClick: ((round: Int) -> Unit)?,
 ) : RecyclerView.Adapter<TrainingRecycleAdapter.RoundViewHolder>(),
     ItemTouchHelperAdapter {
 
@@ -38,12 +38,14 @@ class TrainingRecycleAdapter(
                 )
                 onExerciseChange?.invoke(id, newDescription)
             },
-            onLongClick = onLongClick
+            onLongClick = { round ->
+                onLongClick?.invoke(round)
+            }
         )
     }
 
     override fun onBindViewHolder(holder: RoundViewHolder, position: Int) {
-        holder.onBind(currentList[position])
+        holder.onBind(currentList[position], position)
     }
 
     override fun getItemCount(): Int = currentList.size
@@ -75,10 +77,10 @@ class TrainingRecycleAdapter(
         onListUpdate()
     }
 
-    class RoundViewHolder(
+    inner class RoundViewHolder(
         private val view: View,
         private val onExerciseChange: ((id: Int, newText: String) -> Unit)?,
-        private val onLongClick: ((id: Int) -> Unit)?,
+        private val onLongClick: ((round: Int) -> Unit)?,
     ) : RecyclerView.ViewHolder(view), ItemTouchHelperViewHolder {
 
         override fun onItemSelected() {
@@ -89,7 +91,7 @@ class TrainingRecycleAdapter(
             view.setBackgroundColor(Color.TRANSPARENT)
         }
 
-        fun onBind(exercise: Exercise) {
+        fun onBind(exercise: Exercise, position: Int) {
             view.apply {
                 val text = "Round [ ${adapterPosition + 1} ]"
                 findViewById<TextView>(R.id.tvRoundOfTraining).text = text
@@ -114,11 +116,16 @@ class TrainingRecycleAdapter(
                         }
                     }
                 }
+                setOnLongClickListener {
+                    onLongClick?.invoke(position + 1)
+                    true
+                }
             }
         }
 
         fun onUnbind() {
             view.setOnClickListener(null)
+            view.setOnLongClickListener(null)
         }
     }
 }

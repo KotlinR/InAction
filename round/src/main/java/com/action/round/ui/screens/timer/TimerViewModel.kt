@@ -1,35 +1,54 @@
 package com.action.round.ui.screens.timer
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.action.round.data.models.Training
 
 class TimerViewModel(
     private val timer: Timer,
 ) : ViewModel() {
 
     val actualTimeLiveData: LiveData<String> = timer.actualTimeLiveData
+    val actualRoundLiveData: LiveData<Pair<Int, String>> = timer.actualRoundLiveData
     val trainingStatus: Boolean get() = timer.trainingStatus
 
-    // TODO (возможно лишнее или поменять параметр на Training)
-    private val _trainingLiveData = MutableLiveData<Training?>()
-    val trainingLiveData: LiveData<Training?> = _trainingLiveData
-
-    fun setTraining(training: Training?) {
-        _trainingLiveData.value = training
-        timer.setTrainingParameters(rounds = trainingLiveData.value?.exercises?.size)
+    fun setTraining(totalRounds: Int?) {
+        timer.setTrainingParameters(
+            totalRounds = totalRounds ?: timer.timerParameters.totalRounds
+        )
     }
 
     fun startTraining() {
         timer.runTraining()
     }
 
+    fun startFromThisRound(totalRounds: Int?, numberRound: Int) {
+        timer.startFromThisRound(
+            totalRounds = totalRounds ?: timer.timerParameters.totalRounds,
+            numberRound = numberRound,
+        )
+    }
+
     fun pauseTraining() {
         timer.pauseTraining()
     }
 
-    fun loadTimerParameters() {
+    fun next(totalRounds: Int?) {
+        timer.next()
+    }
+
+    fun back(totalRounds: Int?) {
+        timer.back(
+            setRounds = totalRounds ?: timer.timerParameters.totalRounds
+        )
+    }
+
+    fun resetToStart(totalRounds: Int?) {
+        timer.resetToStart(
+            totalRounds = totalRounds ?: timer.timerParameters.totalRounds
+        )
+    }
+
+    fun displayTimerParameters() {
     }
 
     fun resetTimerParameters(

@@ -12,16 +12,22 @@ class Timer(
 ) {
 
     private val _actualTimeLiveData = MutableLiveData<String>()
-    val actualTimeLiveData: LiveData<String> = _actualTimeLiveData
+    val actualTimeLiveData: LiveData<String> get() = _actualTimeLiveData
+
+    private val _actualRoundLiveData = MutableLiveData<Pair<Int, String>>()
+    val actualRoundLiveData: LiveData<Pair<Int, String>> get() = _actualRoundLiveData
 
     private var _trainingStatus: Boolean = false
     val trainingStatus: Boolean get() = _trainingStatus
 
-    private var _totalRounds: Int = 0
+    private var _totalRounds = 0
     private val totalRounds: Int get() = _totalRounds
 
-    private var _totalRelax: Int = 0
-    private val totalRelax get() = _totalRelax
+    private var _totalRelax = 0
+    private val totalRelax: Int get() = _totalRelax
+
+    private var _currentRounds = 1
+    private val currentRounds: Int get() = _currentRounds
 
     private var _havingCountdown: Boolean = false
     private val havingCountdown: Boolean get() = _havingCountdown
@@ -30,7 +36,7 @@ class Timer(
     private val currentTime: Int get() = _currentTime
 
     private val _timerParameters: TimerParameters = TimerParameters()
-    private val timerParameters get() = _timerParameters
+    val timerParameters get() = _timerParameters
 
     fun pauseTraining() {
         es.execute {
@@ -38,10 +44,124 @@ class Timer(
         }
     }
 
-    fun setTrainingParameters(rounds: Int?) {
+    fun next() {
         es.execute {
-            setTimerParameters()
-            setTotalRoundsAndRelax(rounds)
+            if (havingCountdown) {
+                !havingCountdown
+                _currentTime = timerParameters.round
+                _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
+            }
+            if (!havingCountdown && totalRelax != 0 && totalRounds >= 1) {
+                when (totalRounds) {
+                    totalRelax + 1 -> {
+                        _totalRounds--
+                        _currentRounds++
+                        _currentTime = timerParameters.relax
+                        _actualRoundLiveData.postValue(
+                            Pair(
+                                currentRounds,
+                                "NEXT ROUND $currentRounds"
+                            )
+                        )
+                    }
+                    totalRelax -> {
+                        _totalRelax--
+                        _currentTime = timerParameters.round
+                        _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
+                    }
+                }
+            }
+            setTimeToDisplay(currentTime)
+        }
+    }
+
+    fun back(setRounds: Int) {
+        es.execute {
+            if (totalRounds == setRounds && timerParameters.countdown != 0) {
+                _havingCountdown = true
+                _currentTime = timerParameters.countdown
+                _actualRoundLiveData.postValue(Pair(currentRounds, "WILL START IN:"))
+            }
+            if (totalRounds < setRounds) {
+                when (totalRounds) {
+                    totalRelax + 1 -> {
+                        if (currentTime != timerParameters.round) {
+                            _currentTime = timerParameters.round
+                            _actualRoundLiveData.postValue(
+                                Pair(
+                                    currentRounds,
+                                    "ROUND $currentRounds"
+                                )
+                            )
+                        } else {
+                            _totalRelax++
+                            _currentTime = timerParameters.relax
+                            _actualRoundLiveData.postValue(
+                                Pair(
+                                    currentRounds,
+                                    "NEXT ROUND $currentRounds"
+                                )
+                            )
+                        }
+                    }
+                    totalRelax -> {
+                        if (currentTime != timerParameters.relax) {
+                            _currentTime = timerParameters.relax
+                            _actualRoundLiveData.postValue(
+                                Pair(
+                                    currentRounds,
+                                    "NEXT ROUND $currentRounds"
+                                )
+                            )
+                        } else {
+                            _totalRounds++
+                            _currentRounds--
+                            _currentTime = timerParameters.round
+                            _actualRoundLiveData.postValue(
+                                Pair(
+                                    currentRounds,
+                                    "ROUND $currentRounds"
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+            setTimeToDisplay(currentTime)
+        }
+    }
+
+    fun resetToStart(totalRounds: Int) {
+        es.execute {
+            preparationsForStart(totalRounds)
+            setTimeToDisplay(currentTime)
+            _currentRounds = 1
+            if (havingCountdown) {
+                _actualRoundLiveData.postValue(Pair(currentRounds, "WILL START IN:"))
+            } else {
+                _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
+            }
+        }
+    }
+
+    fun updateTimerParameters() {
+        timerParametersRepository.updateTimerParameters(timerParameters)
+    }
+
+    fun setTrainingParameters(totalRounds: Int) {
+        timerParametersRepository.getTimerParameters { parameters ->
+            parameters?.let {
+                _timerParameters.apply {
+                    countdown = parameters.countdown
+                    round = parameters.round
+                    relax = parameters.relax
+                    preStart = parameters.preStart
+                    preStop = parameters.preStop
+                    round = parameters.totalRounds
+                }
+            }
+            preparationsForStart(totalRounds)
+            setTimeToDisplay(currentTime)
         }
     }
 
@@ -68,6 +188,7 @@ class Timer(
             _trainingStatus = true
 
             if (timerParameters.countdown != 0 && havingCountdown) {
+                _actualRoundLiveData.postValue(Pair(currentRounds, "WILL START IN:"))
                 val timeCountdown =
                     if (currentTime == 0) timerParameters.countdown else _currentTime
                 timer(timeCountdown, timerParameters.preStart)
@@ -78,21 +199,32 @@ class Timer(
 
             while (trainingStatus && totalRounds > 0) {
                 if (totalRounds > totalRelax) {
+                    _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
                     val timeRound = if (currentTime == 0) timerParameters.round else _currentTime
                     timer(timeRound, timerParameters.preStop)
                     if (currentTime == 0) {
-                        _totalRounds = totalRounds - 1
+                        _totalRounds--
+                        _currentRounds++
                     }
+
                 }
                 if (totalRounds == totalRelax) {
+                    _actualRoundLiveData.postValue(Pair(currentRounds, "NEXT ROUND $currentRounds"))
                     val timeRelax = if (currentTime == 0) timerParameters.relax else _currentTime
                     timer(timeRelax, timerParameters.preStart)
                     if (currentTime == 0) {
-                        _totalRelax = totalRelax - 1
+                        _totalRelax--
                     }
                 }
             }
         }
+    }
+
+    fun startFromThisRound(totalRounds: Int, numberRound: Int) {
+        preparationsForStart(totalRounds - numberRound + 1)
+        setTimeToDisplay(currentTime)
+        _currentRounds = numberRound
+        _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
     }
 
     private fun timer(setTime: Int, timePreFinish: Int) {
@@ -111,7 +243,7 @@ class Timer(
             _actualTimeLiveData.postValue("$min:$sec")
 
             if (timePreFinish > 0 && counterMin == 0 && counterSec == timePreFinish) {
-                // TODO (звуковой сигнал)
+                // TODO (звуковой сигнал + маргание таймера(смена цвета))
             }
 
             if (counterSec == 0) {
@@ -150,33 +282,25 @@ class Timer(
         }
     }
 
-    fun updateTimerParameters() {
-        timerParametersRepository.updateTimerParameters(timerParameters)
-    }
-
-    private fun setTimerParameters() {
-        timerParametersRepository.getTimerParameters { parameters ->
-            parameters?.let {
-                _timerParameters.apply {
-                    countdown = parameters.countdown
-                    round = parameters.round
-                    relax = parameters.relax
-                    preStart = parameters.preStart
-                    preStop = parameters.preStop
-                    round = parameters.totalRounds
-                }
-            }
-        }
+    private fun preparationsForStart(totalRounds: Int) {
         _havingCountdown = timerParameters.countdown != 0
+        _totalRounds = totalRounds
+        _totalRelax = totalRounds - 1
+
+        _currentTime = if (havingCountdown) {
+            timerParameters.countdown
+        } else {
+            timerParameters.round
+        }
     }
 
-    private fun setTotalRoundsAndRelax(rounds: Int?) {
-        if (rounds != null) {
-            _totalRounds = rounds
-            _totalRelax = rounds - 1
-        } else {
-            _totalRounds = _timerParameters.totalRounds
-            _totalRelax = totalRounds - 1
-        }
+    private fun setTimeToDisplay(currentTime: Int) {
+        val counterMin: Int = currentTime / 60
+        val counterSec: Int = currentTime - (counterMin * 60)
+
+        val min = if (counterMin < 10) "0$counterMin" else "$counterMin"
+        val sec = if (counterSec < 10) "0$counterSec" else "$counterSec"
+
+        _actualTimeLiveData.postValue("$min:$sec")
     }
 }
