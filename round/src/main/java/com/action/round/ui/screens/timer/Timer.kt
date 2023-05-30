@@ -57,12 +57,7 @@ class Timer(
                         _totalRounds--
                         _currentRounds++
                         _currentTime = timerParameters.relax
-                        _actualRoundLiveData.postValue(
-                            Pair(
-                                currentRounds,
-                                "NEXT ROUND $currentRounds"
-                            )
-                        )
+                        _actualRoundLiveData.postValue(Pair(currentRounds, "NEXT ROUND $currentRounds"))
                     }
                     totalRelax -> {
                         _totalRelax--
@@ -77,52 +72,40 @@ class Timer(
 
     fun back(setRounds: Int) {
         es.execute {
-            if (totalRounds == setRounds && timerParameters.countdown != 0) {
-                _havingCountdown = true
-                _currentTime = timerParameters.countdown
-                _actualRoundLiveData.postValue(Pair(currentRounds, "WILL START IN:"))
+            if (totalRounds == setRounds) {
+                when {
+                    timerParameters.countdown != 0 && currentTime == timerParameters.round -> {
+                        _havingCountdown = true
+                        _currentTime = timerParameters.countdown
+                        _actualRoundLiveData.postValue(Pair(currentRounds, "WILL START IN:"))
+                    }
+                    else -> {
+                        _currentTime = timerParameters.round
+                        _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
+                    }
+                }
             }
             if (totalRounds < setRounds) {
                 when (totalRounds) {
                     totalRelax + 1 -> {
                         if (currentTime != timerParameters.round) {
                             _currentTime = timerParameters.round
-                            _actualRoundLiveData.postValue(
-                                Pair(
-                                    currentRounds,
-                                    "ROUND $currentRounds"
-                                )
-                            )
+                            _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
                         } else {
                             _totalRelax++
                             _currentTime = timerParameters.relax
-                            _actualRoundLiveData.postValue(
-                                Pair(
-                                    currentRounds,
-                                    "NEXT ROUND $currentRounds"
-                                )
-                            )
+                            _actualRoundLiveData.postValue(Pair(currentRounds, "NEXT ROUND $currentRounds"))
                         }
                     }
                     totalRelax -> {
                         if (currentTime != timerParameters.relax) {
                             _currentTime = timerParameters.relax
-                            _actualRoundLiveData.postValue(
-                                Pair(
-                                    currentRounds,
-                                    "NEXT ROUND $currentRounds"
-                                )
-                            )
+                            _actualRoundLiveData.postValue(Pair(currentRounds, "NEXT ROUND $currentRounds"))
                         } else {
                             _totalRounds++
                             _currentRounds--
                             _currentTime = timerParameters.round
-                            _actualRoundLiveData.postValue(
-                                Pair(
-                                    currentRounds,
-                                    "ROUND $currentRounds"
-                                )
-                            )
+                            _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
                         }
                     }
                 }
@@ -144,9 +127,7 @@ class Timer(
         }
     }
 
-    fun updateTimerParameters() {
-        timerParametersRepository.updateTimerParameters(timerParameters)
-    }
+    fun updateTimerParameters() = timerParametersRepository.updateTimerParameters(timerParameters)
 
     fun setTrainingParameters(totalRounds: Int) {
         timerParametersRepository.getTimerParameters { parameters ->
@@ -189,8 +170,7 @@ class Timer(
 
             if (timerParameters.countdown != 0 && havingCountdown) {
                 _actualRoundLiveData.postValue(Pair(currentRounds, "WILL START IN:"))
-                val timeCountdown =
-                    if (currentTime == 0) timerParameters.countdown else _currentTime
+                val timeCountdown = if (currentTime == 0) timerParameters.countdown else _currentTime
                 timer(timeCountdown, timerParameters.preStart)
                 if (currentTime == 0) {
                     _havingCountdown = false
@@ -206,7 +186,6 @@ class Timer(
                         _totalRounds--
                         _currentRounds++
                     }
-
                 }
                 if (totalRounds == totalRelax) {
                     _actualRoundLiveData.postValue(Pair(currentRounds, "NEXT ROUND $currentRounds"))
@@ -253,7 +232,6 @@ class Timer(
 
             _currentTime--
             counterSec--
-
             Thread.sleep(1000)
         }
     }
@@ -286,12 +264,7 @@ class Timer(
         _havingCountdown = timerParameters.countdown != 0
         _totalRounds = totalRounds
         _totalRelax = totalRounds - 1
-
-        _currentTime = if (havingCountdown) {
-            timerParameters.countdown
-        } else {
-            timerParameters.round
-        }
+        _currentTime = if (havingCountdown) timerParameters.countdown else timerParameters.round
     }
 
     private fun setTimeToDisplay(currentTime: Int) {

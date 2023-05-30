@@ -43,6 +43,9 @@ dependencies {
     implementation("androidx.room:room-runtime:2.5.1")
     kapt("androidx.room:room-compiler:2.5.1")
 
+    // Bottom Sheet
+    implementation("com.google.android.material:material:1.7.0-alpha03")
+
     // Tests
     testImplementation("androidx.test.ext:junit-ktx:1.1.5")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")

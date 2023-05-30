@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
@@ -17,6 +18,7 @@ import com.action.round.data.models.Exercise
 import com.action.round.data.models.Training
 import com.action.round.ui.screens.training.TrainingRecycleAdapter
 import com.action.round.utills.toast
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class TimerActivity : ComponentActivity() {
 
@@ -40,6 +42,8 @@ class TimerActivity : ComponentActivity() {
     private val btnBack by lazy { findViewById<ImageView>(R.id.btnBack) }
     private val btnNext by lazy { findViewById<ImageView>(R.id.btnNext) }
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvPreviewRounds) }
+    private val bottomSheetTimer by lazy { findViewById<ConstraintLayout>(R.id.bottomSheetTimer) }
+    private val bottomSheetBehavior by lazy { BottomSheetBehavior.from(bottomSheetTimer) }
 
     private val viewModel: TimerViewModel by viewModels {
         dependencies.timerViewModelFactory
@@ -102,6 +106,12 @@ class TimerActivity : ComponentActivity() {
         tvActualExercise.text = exercises?.get(0)?.description.orEmpty()
 
         btnSettingTimer.setOnClickListener {
+            val state =
+                if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
+                    BottomSheetBehavior.STATE_COLLAPSED
+                else
+                    BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetBehavior.state = state
             // TODO (
             //  при открытии установить параметры из SP
             //  при закрытии сохранить только измененые параметры
@@ -150,7 +160,6 @@ class TimerActivity : ComponentActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun initObserves() {
-
         viewModel.apply {
             actualTimeLiveData.observe(timerActivity) { actualTime ->
                 tvDisplayTimer.text = actualTime
@@ -183,12 +192,12 @@ class TimerActivity : ComponentActivity() {
     }
 
     private fun ImageView.makeMuted() {
-        this.isEnabled = false
+        isEnabled = false
         setColorFilter(gray)
     }
 
     private fun ImageView.makeActive() {
-        this.isEnabled = true
+        isEnabled = true
         clearColorFilter()
     }
 }
