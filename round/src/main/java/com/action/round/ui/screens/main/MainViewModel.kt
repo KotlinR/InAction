@@ -13,8 +13,13 @@ class MainViewModel(
     private val _trainingsLiveData = MutableLiveData<List<Training>>()
     val trainingsLiveData: LiveData<List<Training>> = _trainingsLiveData
 
-    private val _openSecondScreenLiveData = MutableLiveData<Training?>()
-    val openSecondScreenLiveData: LiveData<Training?> = _openSecondScreenLiveData
+    private val _openSecondScreenTrainingActivityLiveData = MutableLiveData<Training?>()
+    val openSecondScreenTrainingActivityLiveData: LiveData<Training?> =
+        _openSecondScreenTrainingActivityLiveData
+
+    private val _openSecondScreenTimerActivityLiveData = MutableLiveData<Unit?>()
+    val openSecondScreenTimerActivityLiveData: LiveData<Unit?> = _openSecondScreenTimerActivityLiveData
+
 
     init {
         getAllTrainings()
@@ -27,7 +32,11 @@ class MainViewModel(
     }
 
     fun openTrainingScreen(training: Training?) {
-        _openSecondScreenLiveData.value = training
+        _openSecondScreenTrainingActivityLiveData.value = training
+    }
+
+    fun openTimerScreen() {
+        _openSecondScreenTimerActivityLiveData.value = null
     }
 
     fun deleteTraining(training: Training) {

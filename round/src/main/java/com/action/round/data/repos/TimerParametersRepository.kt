@@ -11,13 +11,15 @@ class TimerParametersRepository(
     private val es: ExecutorService,
     private val timerParametersConverter: TimerParametersConverter,
 ) {
+    private fun createPrimaryTimerParameters(): TimerParametersEntity {
+        timerParametersDao.createPrimaryTimerParameters(TimerParametersEntity())
+        return TimerParametersEntity()
+    }
 
     fun getTimerParameters(onTrainingParameters: (TimerParameters?) -> Unit) {
         es.execute {
-            val parameters = timerParametersDao.getTimerParameters()
-            onTrainingParameters(
-                timerParametersConverter.converter(parameters)
-            )
+            val parameters = timerParametersDao.getTimerParameters() ?: createPrimaryTimerParameters()
+            onTrainingParameters(timerParametersConverter.converter(parameters))
         }
     }
 
@@ -25,6 +27,7 @@ class TimerParametersRepository(
         es.execute {
             timerParametersDao.updateTimerParameter(
                 TimerParametersEntity(
+                    id = 0,
                     countdown = timerParameters.countdown,
                     round = timerParameters.round,
                     relax = timerParameters.relax,

@@ -91,21 +91,19 @@ class TrainingRecycleAdapter(
             view.setBackgroundColor(Color.TRANSPARENT)
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         fun onBind(exercise: Exercise, position: Int) {
             view.apply {
                 val text = "Round [ ${adapterPosition + 1} ]"
                 findViewById<TextView>(R.id.tvRoundOfTraining).text = text
-                if (onLongClick != null) {
+                if (this@TrainingRecycleAdapter.onLongClick != null) {
                     findViewById<EditText>(R.id.etExerciseOfTraining).apply {
-                        isClickable = false
-                        isFocusable = false
-                        isCursorVisible = false
-                        isLongClickable = false
-                        isClickable = false
-                        isEnabled = false
-                        isFocusableInTouchMode = false
-                        setOnKeyListener(null)
                         setText(exercise.description)
+                        isEnabled = false
+                    }
+                    setOnLongClickListener {
+                        onLongClick?.invoke(position + 1)
+                        true
                     }
                 } else {
                     findViewById<EditText>(R.id.etExerciseOfTraining).apply {
@@ -115,10 +113,6 @@ class TrainingRecycleAdapter(
                             onExerciseChange?.invoke(exercise.id, it?.toString().orEmpty())
                         }
                     }
-                }
-                setOnLongClickListener {
-                    onLongClick?.invoke(position + 1)
-                    true
                 }
             }
         }

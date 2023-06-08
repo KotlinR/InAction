@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
@@ -18,16 +18,15 @@ import com.action.round.data.models.Exercise
 import com.action.round.data.models.Training
 import com.action.round.ui.screens.training.TrainingRecycleAdapter
 import com.action.round.utills.toast
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 
-class TimerActivity : ComponentActivity() {
+class TimerActivity : AppCompatActivity() {
 
     companion object {
 
         private const val KEY_TRAINING = "training"
         private const val BACK_PRESS_TIME_MS = 2000L
 
-        fun buildIntent(activity: ComponentActivity, training: Training): Intent {
+        fun buildIntent(activity: ComponentActivity, training: Training?): Intent {
             return Intent(activity, TimerActivity::class.java).putExtra(KEY_TRAINING, training)
         }
     }
@@ -42,11 +41,18 @@ class TimerActivity : ComponentActivity() {
     private val btnBack by lazy { findViewById<ImageView>(R.id.btnBack) }
     private val btnNext by lazy { findViewById<ImageView>(R.id.btnNext) }
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvPreviewRounds) }
-    private val bottomSheetTimer by lazy { findViewById<ConstraintLayout>(R.id.bottomSheetTimer) }
-    private val bottomSheetBehavior by lazy { BottomSheetBehavior.from(bottomSheetTimer) }
 
     private val viewModel: TimerViewModel by viewModels {
         dependencies.timerViewModelFactory
+    }
+
+    private val bottomSheet by lazy {
+        TimerParametersBottomSheet(
+            timerParameters = viewModel.timerParameters,
+            totalRounds = totalRounds,
+            onResetTimerParameters = { newTimerParameters -> viewModel.resetTimerParameters(newTimerParameters) },
+            onRefreshTotalRounds = { newTotalRounds -> tvRoundsInTimer.text = newTotalRounds.toString() },
+        )
     }
 
     private val gray = Color.DKGRAY
@@ -62,6 +68,7 @@ class TimerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timer)
+        supportActionBar?.hide()
 
         setUpTraining()
         initUI()
@@ -74,8 +81,6 @@ class TimerActivity : ComponentActivity() {
         exercises = training?.exercises
         totalRounds = exercises?.size
         viewModel.setTraining(totalRounds = totalRounds)
-        tvTrainingTitleInTimer.text = training?.title
-        tvRoundsInTimer.text = exercises.orEmpty().size.toString()
     }
 
     private fun Intent.getTraining(): Training? {
@@ -93,25 +98,22 @@ class TimerActivity : ComponentActivity() {
             onMove = null,
             onExerciseChange = null,
             onLongClick = { round ->
-                if (!viewModel.trainingStatus) viewModel.startFromThisRound(
+                if (!viewModel.trainingStatus && training != null) viewModel.startFromThisRound(
                     totalRounds = totalRounds,
                     numberRound = round,
                 )
             },
         )
-        adapter?.submitList(exercises.orEmpty())
+        adapter?.submitList(newList = exercises.orEmpty())
         recyclerView.adapter = adapter
 
+        tvTrainingTitleInTimer.text = training?.title ?: "TIMER"
         tvActualRound.text = "Start you training!"
         tvActualExercise.text = exercises?.get(0)?.description.orEmpty()
+        tvRoundsInTimer.text = totalRounds?.toString() ?: viewModel.timerParameters.totalRounds.toString()
 
         btnSettingTimer.setOnClickListener {
-            val state =
-                if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
-                    BottomSheetBehavior.STATE_COLLAPSED
-                else
-                    BottomSheetBehavior.STATE_EXPANDED
-            bottomSheetBehavior.state = state
+            bottomSheet.show(supportFragmentManager, TimerParametersBottomSheet.TAG)
             // TODO (
             //  при открытии установить параметры из SP
             //  при закрытии сохранить только измененые параметры
@@ -122,39 +124,41 @@ class TimerActivity : ComponentActivity() {
         btnStartAndPause.apply {
             setOnClickListener {
                 if (!viewModel.trainingStatus) {
+                    viewModel.startTraining()
                     btnStartAndPause.setImageResource(android.R.drawable.ic_media_pause)
                     btnNext.makeMuted()
                     btnBack.makeMuted()
                     btnSettingTimer.makeMuted()
-                    viewModel.startTraining()
                 } else {
                     toast { "Hold long to stop" }
                 }
             }
             setOnLongClickListener {
-                btnStartAndPause.setImageResource(android.R.drawable.ic_media_play)
-                viewModel.pauseTraining()
-                btnNext.makeActive()
-                btnBack.makeActive()
-                btnSettingTimer.makeActive()
-                toast { "Training paused" }
+                if (viewModel.trainingStatus) {
+                    viewModel.pauseTraining()
+                    btnStartAndPause.setImageResource(android.R.drawable.ic_media_play)
+                    btnNext.makeActive()
+                    btnBack.makeActive()
+                    btnSettingTimer.makeActive()
+                    toast { "Training paused" }
+                }
                 true
             }
         }
 
         btnBack.apply {
             setOnClickListener {
-                if (!viewModel.trainingStatus) viewModel.back(totalRounds)
+                if (!viewModel.trainingStatus) viewModel.back(totalRounds = totalRounds)
             }
             setOnLongClickListener {
-                if (!viewModel.trainingStatus) viewModel.resetToStart(totalRounds)
+                if (!viewModel.trainingStatus) viewModel.resetToStart(totalRounds = totalRounds)
                 toast { "Training from the beginning" }
                 true
             }
         }
 
         btnNext.setOnClickListener {
-            if (!viewModel.trainingStatus) viewModel.next(totalRounds)
+            if (!viewModel.trainingStatus) viewModel.next()
         }
     }
 
@@ -167,7 +171,9 @@ class TimerActivity : ComponentActivity() {
             actualRoundLiveData.observe(timerActivity) { actualRound ->
                 tvActualRound.text = actualRound.second
                 tvActualExercise.text = exercises?.get(actualRound.first - 1)?.description.orEmpty()
-                recyclerView.scrollToPosition(actualRound.first - 1)
+                if (training != null && actualRound.first < totalRounds!!) {
+                    recyclerView.scrollToPosition(actualRound.first)
+                }
             }
         }
     }
@@ -180,6 +186,7 @@ class TimerActivity : ComponentActivity() {
                     if (!viewModel.trainingStatus) {
                         if (backPressed + BACK_PRESS_TIME_MS > System.currentTimeMillis()) {
                             isEnabled = false
+                            viewModel.updateTimerParametersDB()
                             onBackPressedDispatcher.onBackPressed()
                         } else {
                             toast { "Press once again to exit!" }

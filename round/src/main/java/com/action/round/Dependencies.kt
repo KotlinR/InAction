@@ -33,7 +33,7 @@ class Dependencies(private val context: Context) {
     val mainViewModelFactory: ViewModelProvider.Factory
         get() = viewModelFactory {
             initializer {
-                MainViewModel(trainingRepository)
+                MainViewModel(trainingRepository = trainingRepository)
             }
         }
 
@@ -50,7 +50,9 @@ class Dependencies(private val context: Context) {
     val timerViewModelFactory: ViewModelProvider.Factory
         get() = viewModelFactory {
             initializer {
-                TimerViewModel(timer)
+                TimerViewModel(
+                    timer = timer,
+                )
             }
         }
 

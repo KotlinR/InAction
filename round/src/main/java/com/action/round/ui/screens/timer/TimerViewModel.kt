@@ -2,6 +2,7 @@ package com.action.round.ui.screens.timer
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.action.round.data.models.TimerParameters
 
 class TimerViewModel(
     private val timer: Timer,
@@ -10,11 +11,11 @@ class TimerViewModel(
     val actualTimeLiveData: LiveData<String> = timer.actualTimeLiveData
     val actualRoundLiveData: LiveData<Pair<Int, String>> = timer.actualRoundLiveData
     val trainingStatus: Boolean get() = timer.trainingStatus
+    val timerParameters: TimerParameters get() = timer.timerParameters
+    private val originTimeParameters: TimerParameters = timer.originTimeParameters
 
     fun setTraining(totalRounds: Int?) {
-        timer.setTrainingParameters(
-            totalRounds = totalRounds ?: timer.timerParameters.totalRounds
-        )
+        timer.setTrainingParameters(totalRounds = totalRounds)
     }
 
     fun startTraining() {
@@ -32,37 +33,30 @@ class TimerViewModel(
         timer.pauseTraining()
     }
 
-    fun next(totalRounds: Int?) {
+    fun next() {
         timer.next()
     }
 
     fun back(totalRounds: Int?) {
-        timer.back(
-            setRounds = totalRounds ?: timer.timerParameters.totalRounds
-        )
+        timer.back(setRounds = totalRounds ?: timer.timerParameters.totalRounds)
     }
 
     fun resetToStart(totalRounds: Int?) {
-        timer.resetToStart(
-            totalRounds = totalRounds ?: timer.timerParameters.totalRounds
+        timer.resetToStart(totalRounds = totalRounds ?: timer.timerParameters.totalRounds)
+    }
+
+    fun resetTimerParameters(timerParameters: TimerParameters) {
+        timer.resetTimeParameters(
+            countdown = timerParameters.countdown,
+            round = timerParameters.round,
+            relax = timerParameters.relax,
+            preStart = timerParameters.preStart,
+            preStop = timerParameters.preStop,
+            totalRounds = timerParameters.totalRounds,
         )
     }
 
-    fun displayTimerParameters() {
-    }
-
-    fun resetTimerParameters(
-        totalRounds: Int?,
-        countdown: Int,
-        round: Int,
-        relax: Int,
-        preStart: Int,
-        preStop: Int,
-    ) {
-        timer.resetTimeParameters(totalRounds, countdown, round, relax, preStart, preStop)
-    }
-
     fun updateTimerParametersDB() {
-        timer.updateTimerParameters()
+        if (timerParameters != originTimeParameters) timer.updateTimerParameters()
     }
 }

@@ -5,17 +5,338 @@
     android:id="@+id/bottomSheetTimer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:background="#323232"
     android:paddingBottom="32dp"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     tools:ignore="MissingConstraints">
 
+    <TextView
+        android:id="@+id/tvTimerParameters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:gravity="center"
+        android:text="@string/timer_parameters"
+        android:textColor="@color/gray_blue"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTotalRounds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:text="@string/total"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toStartOf="@+id/barrierTimerParameters"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTimerParameters" />
+
+    <EditText
+        android:id="@+id/tvTotalRoundsField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLength="2"
+        android:text=""
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="@id/tvTotalRounds"
+        app:layout_constraintStart_toStartOf="@+id/tvTotalRounds"
+        app:layout_constraintTop_toBottomOf="@+id/tvTotalRounds" />
+
+    <TextView
+        android:id="@+id/tvBS_Round"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:text="@string/round"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toStartOf="@+id/tvRelax"
+        app:layout_constraintStart_toStartOf="@id/barrierTimerParameters"
+        app:layout_constraintTop_toBottomOf="@+id/tvTimerParameters" />
+
+    <TextView
+        android:id="@+id/tvRelax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:text="@string/relax"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvBS_Round"
+        app:layout_constraintTop_toBottomOf="@+id/tvTimerParameters" />
+
+    <EditText
+        android:id="@+id/tvRoundMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="1dp"
+        android:inputType="number"
+        android:maxLength="2"
+        android:text=""
+        android:textSize="32sp"
+        app:layout_constraintEnd_toStartOf="@+id/separatorRoundTime"
+        app:layout_constraintStart_toStartOf="@id/tvBS_Round"
+        app:layout_constraintTop_toBottomOf="@+id/tvBS_Round" />
+
+    <TextView
+        android:id="@+id/separatorRoundTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_separator"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvRoundMin"
+        app:layout_constraintEnd_toStartOf="@+id/tvRoundSec"
+        app:layout_constraintStart_toEndOf="@+id/tvRoundMin"
+        app:layout_constraintTop_toTopOf="@+id/tvRoundMin" />
+
+    <EditText
+        android:id="@+id/tvRoundSec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="1dp"
+        android:inputType="number"
+        android:maxLength="2"
+        android:text=""
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvBS_Round"
+        app:layout_constraintStart_toEndOf="@+id/separatorRoundTime"
+        app:layout_constraintTop_toBottomOf="@+id/tvBS_Round" />
+
+    <EditText
+        android:id="@+id/tvRelaxMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="1dp"
+        android:inputType="number"
+        android:maxLength="2"
+        android:text=""
+        android:textSize="32sp"
+        app:layout_constraintEnd_toStartOf="@+id/separatorRelaxTime"
+        app:layout_constraintStart_toStartOf="@+id/tvRelax"
+        app:layout_constraintTop_toBottomOf="@+id/tvRelax" />
+
+    <TextView
+        android:id="@+id/separatorRelaxTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_separator"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvRelaxMin"
+        app:layout_constraintEnd_toStartOf="@+id/tvRelaxSec"
+        app:layout_constraintStart_toEndOf="@+id/tvRelaxMin"
+        app:layout_constraintTop_toTopOf="@+id/tvRelaxMin" />
+
+    <EditText
+        android:id="@+id/tvRelaxSec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="1dp"
+        android:inputType="number"
+        android:maxLength="2"
+        android:text=""
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="@id/tvRelax"
+        app:layout_constraintStart_toEndOf="@+id/separatorRelaxTime"
+        app:layout_constraintTop_toBottomOf="@+id/tvRelax" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrierTimerParameters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="tvCountdown"
+        tools:layout_editor_absoluteX="5dp" />
+
+    <TextView
+        android:id="@+id/tvCountdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/countdown"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvRoundMin" />
+
+    <TextView
+        android:id="@+id/tvPreStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:text="@string/pre_start"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCountdown" />
+
+    <TextView
+        android:id="@+id/tvPreStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:text="@string/pre_stop"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPreStart" />
+
+    <TextView
+        android:id="@+id/tvCountdown_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/off"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCountdown"
+        app:layout_constraintEnd_toStartOf="@+id/tvCountdown_15"
+        app:layout_constraintStart_toEndOf="@+id/barrierTimerParameters"
+        app:layout_constraintTop_toTopOf="@+id/tvCountdown" />
+
+    <TextView
+        android:id="@+id/tvCountdown_15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_15"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCountdown"
+        app:layout_constraintEnd_toStartOf="@+id/tvCountdown_30"
+        app:layout_constraintStart_toEndOf="@+id/tvCountdown_0"
+        app:layout_constraintTop_toTopOf="@+id/tvCountdown" />
+
+    <TextView
+        android:id="@+id/tvCountdown_30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_30"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCountdown"
+        app:layout_constraintEnd_toStartOf="@+id/tvCountdown_60"
+        app:layout_constraintStart_toEndOf="@+id/tvCountdown_15"
+        app:layout_constraintTop_toTopOf="@+id/tvCountdown" />
+
+    <TextView
+        android:id="@+id/tvCountdown_60"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_60"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCountdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvCountdown_30"
+        app:layout_constraintTop_toTopOf="@+id/tvCountdown" />
+
+    <TextView
+        android:id="@+id/tvPreStart_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/off"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPreStart"
+        app:layout_constraintEnd_toStartOf="@+id/tvPreStart_10"
+        app:layout_constraintStart_toEndOf="@+id/barrierTimerParameters"
+        app:layout_constraintTop_toTopOf="@+id/tvPreStart" />
+
+    <TextView
+        android:id="@+id/tvPreStart_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_10"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPreStart"
+        app:layout_constraintEnd_toStartOf="@+id/tvPreStart_20"
+        app:layout_constraintStart_toEndOf="@+id/tvPreStart_0"
+        app:layout_constraintTop_toTopOf="@+id/tvPreStart" />
+
+    <TextView
+        android:id="@+id/tvPreStart_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_20"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPreStart"
+        app:layout_constraintEnd_toStartOf="@+id/tvPreStart_30"
+        app:layout_constraintStart_toEndOf="@+id/tvPreStart_10"
+        app:layout_constraintTop_toTopOf="@+id/tvPreStart" />
+
+    <TextView
+        android:id="@+id/tvPreStart_30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_30"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPreStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvPreStart_20"
+        app:layout_constraintTop_toTopOf="@+id/tvPreStart" />
+
+    <TextView
+        android:id="@+id/tvPreStop_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/off"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPreStop"
+        app:layout_constraintEnd_toStartOf="@+id/tvPreStart_10"
+        app:layout_constraintStart_toEndOf="@+id/barrierTimerParameters"
+        app:layout_constraintTop_toTopOf="@+id/tvPreStop" />
+
+    <TextView
+        android:id="@+id/tvPreStop_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_10"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPreStop"
+        app:layout_constraintEnd_toStartOf="@+id/tvPreStart_20"
+        app:layout_constraintStart_toEndOf="@+id/tvPreStop_0"
+        app:layout_constraintTop_toTopOf="@+id/tvPreStop" />
+
+    <TextView
+        android:id="@+id/tvPreStop_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_20"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPreStop"
+        app:layout_constraintEnd_toStartOf="@+id/tvPreStart_30"
+        app:layout_constraintStart_toEndOf="@+id/tvPreStop_10"
+        app:layout_constraintTop_toTopOf="@+id/tvPreStop" />
+
+    <TextView
+        android:id="@+id/tvPreStop_30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="2dp"
+        android:text="@string/_30"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPreStop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvPreStop_20"
+        app:layout_constraintTop_toTopOf="@+id/tvPreStop" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ЗАЕБИСЬ"
-        android:textSize="32dp" />
+        android:id="@+id/btnApply"
+        android:layout_marginHorizontal="5dp"
+        android:text="@string/apply"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPreStop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,4 +36,19 @@
     <string name="all_trainings_btn">ALL TRAININGS</string>
     <string name="enter_exercise">Enter exercise</string>
     <string name="title_of_training">Title of training</string>
+    <string name="timer_parameters">Timer parameters</string>
+    <string name="off">OFF</string>
+    <string name="_15">15</string>
+    <string name="_30">30</string>
+    <string name="_60">60</string>
+    <string name="_10">10</string>
+    <string name="_20">20</string>
+    <string name="_separator">:</string>
+    <string name="apply">Apply</string>
+    <string name="pre_start">Pre start</string>
+    <string name="pre_stop">Pre stop</string>
+    <string name="countdown">Countdown</string>
+    <string name="relax">Relax</string>
+    <string name="round">Round</string>
+    <string name="total">Total</string>
 </resources>
