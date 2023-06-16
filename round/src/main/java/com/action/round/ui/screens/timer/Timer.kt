@@ -136,7 +136,10 @@ class Timer(
     }
 
 
-    fun setTrainingParameters(totalRounds: Int?) {
+    fun setTrainingParameters(
+        totalRounds: Int?,
+        onResultTotalRounds: (Int) -> Unit,
+    ) {
         timerParametersRepository.getTimerParameters { parameters ->
             parameters?.let {
                 Log.d("!!!", parameters.toString())
@@ -148,6 +151,7 @@ class Timer(
                     this.preStop = it.preStop
                     this.totalRounds = it.totalRounds
                 }
+                onResultTotalRounds(totalRounds ?: timerParameters.totalRounds)
                 _originTimeParameters.apply {
                     this.countdown = it.countdown
                     this.round = it.round

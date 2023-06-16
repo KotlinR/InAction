@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.widget.doAfterTextChanged
 import com.action.round.R
 import com.action.round.data.models.TimerParameters
 import com.action.round.utills.hideKeyboard
@@ -227,19 +226,18 @@ class TimerParametersBottomSheet(
         return this.findViewById<EditText?>(idView).apply {
             setText(text)
             setSelection(this.text.length)
-            doAfterTextChanged {
-                if (this == tvRoundMin || this == tvRoundSec) {
+            setOnFocusChangeListener { view, b ->
+                if (view == tvRoundMin || view == tvRoundSec && !b) {
                     val timeRound = convertToSeconds(tvRoundMin, tvRoundSec)
                     resetTimersParameters.round = if (timeRound < 30) 30 else timeRound
                 }
-                if (this == tvRelaxMin || this == tvRelaxSec) {
+                if (view == tvRelaxMin || view == tvRelaxSec && !b) {
                     val timeRelax = convertToSeconds(tvRelaxMin, tvRelaxSec)
                     resetTimersParameters.relax = if (timeRelax < 15) 15 else timeRelax
                 }
-                if (this == tvTotalRoundsField && totalRounds == null) {
+                if (view == tvTotalRoundsField && totalRounds == null && !b) {
                     resetTimersParameters.totalRounds = convertToRounds(tvTotalRoundsField)
                 }
-
             }
         }
     }

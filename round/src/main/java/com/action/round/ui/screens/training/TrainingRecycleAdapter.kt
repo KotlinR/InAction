@@ -2,12 +2,12 @@ package com.action.round.ui.screens.training
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.R
 import com.action.round.data.models.Exercise
@@ -28,7 +28,7 @@ class TrainingRecycleAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoundViewHolder {
         return RoundViewHolder(
-            view = LayoutInflater
+            itemView = LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.item_round, parent, false),
             onExerciseChange = { id, newDescription ->
@@ -36,6 +36,7 @@ class TrainingRecycleAdapter(
                     predicate = { it.id == id },
                     modify = { it.copy(description = newDescription) },
                 )
+                Log.d("!!!", "$currentList")
                 onExerciseChange?.invoke(id, newDescription)
             },
             onLongClick = { round ->
@@ -78,22 +79,22 @@ class TrainingRecycleAdapter(
     }
 
     inner class RoundViewHolder(
-        private val view: View,
+        itemView: View,
         private val onExerciseChange: ((id: Int, newText: String) -> Unit)?,
         private val onLongClick: ((round: Int) -> Unit)?,
-    ) : RecyclerView.ViewHolder(view), ItemTouchHelperViewHolder {
+    ) : RecyclerView.ViewHolder(itemView), ItemTouchHelperViewHolder {
 
         override fun onItemSelected() {
-            view.setBackgroundColor(Color.LTGRAY)
+            itemView.setBackgroundColor(Color.DKGRAY)
         }
 
         override fun onItemClear() {
-            view.setBackgroundColor(Color.TRANSPARENT)
+            itemView.setBackgroundColor(Color.TRANSPARENT)
         }
 
-        @SuppressLint("NotifyDataSetChanged")
         fun onBind(exercise: Exercise, position: Int) {
-            view.apply {
+            itemView.apply {
+                onFocusChangeListener
                 val text = "Round [ ${adapterPosition + 1} ]"
                 findViewById<TextView>(R.id.tvRoundOfTraining).text = text
                 if (this@TrainingRecycleAdapter.onLongClick != null) {
@@ -107,19 +108,23 @@ class TrainingRecycleAdapter(
                     }
                 } else {
                     findViewById<EditText>(R.id.etExerciseOfTraining).apply {
+                        setOnFocusChangeListener { view, b ->
+                            if (view == this && !b) {
+                                val newText = itemView.findViewById<EditText>(R.id.etExerciseOfTraining).text
+                                onExerciseChange?.invoke(exercise.id, newText?.toString().orEmpty())
+                                Log.d("!!!", "$newText")
+                            }
+                        }
                         setText(exercise.description)
                         setSelection(exercise.description.length)
-                        doAfterTextChanged {
-                            onExerciseChange?.invoke(exercise.id, it?.toString().orEmpty())
-                        }
                     }
                 }
             }
         }
 
         fun onUnbind() {
-            view.setOnClickListener(null)
-            view.setOnLongClickListener(null)
+            itemView.setOnClickListener(null)
+            itemView.setOnLongClickListener(null)
         }
     }
 }

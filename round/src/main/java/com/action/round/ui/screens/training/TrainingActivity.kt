@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.*
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -37,7 +37,7 @@ class TrainingActivity : ComponentActivity() {
     private val tvTrainingTitle by lazy { findViewById<TextView>(R.id.etTrainingTitle) }
     private val tvRounds by lazy { findViewById<TextView>(R.id.tvRounds) }
     private val rootView by lazy { findViewById<ViewGroup>(R.id.rootView) }
-    private val btnStartTraining by lazy { findViewById<Button>(R.id.btnStartTraining) }
+    private val btnStartTraining by lazy { findViewById<ImageView>(R.id.btnStartTraining) }
 
     private val viewModel: TrainingViewModel by viewModels {
         dependencies.trainingViewModelFactory
@@ -74,7 +74,13 @@ class TrainingActivity : ComponentActivity() {
             onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) },
             onLongClick = null,
         ).also {
-            ItemTouchHelper(SimpleItemTouchHelperCallback(it)).attachToRecyclerView(recyclerView)
+            ItemTouchHelper(SimpleItemTouchHelperCallback(
+                adapter = it,
+                movePermit = true,
+                context = this,
+                hideKeyboard = { itemView -> itemView.hideKeyboard() }
+            )
+            ).attachToRecyclerView(recyclerView)
             recyclerView.adapter = it
         }
 

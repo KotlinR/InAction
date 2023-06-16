@@ -25,6 +25,7 @@ class TimerActivity : AppCompatActivity() {
 
         private const val KEY_TRAINING = "training"
         private const val BACK_PRESS_TIME_MS = 2000L
+        private const val START_MESSAGE = "Start you training!"
 
         fun buildIntent(activity: ComponentActivity, training: Training?): Intent {
             return Intent(activity, TimerActivity::class.java).putExtra(KEY_TRAINING, training)
@@ -80,7 +81,14 @@ class TimerActivity : AppCompatActivity() {
         training = intent.getTraining()
         exercises = training?.exercises
         totalRounds = exercises?.size
-        viewModel.setTraining(totalRounds = totalRounds)
+        tvTrainingTitleInTimer.text = training?.title ?: "TIMER"
+        tvActualRound.text = START_MESSAGE
+        tvActualExercise.text = exercises?.get(0)?.description.orEmpty()
+
+        viewModel.setTraining(
+            totalRounds = totalRounds,
+            onResultTotalRounds = { result -> tvRoundsInTimer.text = result.toString() },
+        )
     }
 
     private fun Intent.getTraining(): Training? {
@@ -107,18 +115,9 @@ class TimerActivity : AppCompatActivity() {
         adapter?.submitList(newList = exercises.orEmpty())
         recyclerView.adapter = adapter
 
-        tvTrainingTitleInTimer.text = training?.title ?: "TIMER"
-        tvActualRound.text = "Start you training!"
-        tvActualExercise.text = exercises?.get(0)?.description.orEmpty()
-        tvRoundsInTimer.text = totalRounds?.toString() ?: viewModel.timerParameters.totalRounds.toString()
-
         btnSettingTimer.setOnClickListener {
             bottomSheet.show(supportFragmentManager, TimerParametersBottomSheet.TAG)
-            // TODO (
-            //  при открытии установить параметры из SP
-            //  при закрытии сохранить только измененые параметры
-            //  учитываем статус тренировки true/false
-            //  )
+            // TODO (вариант открытия при запущенном таймере)
         }
 
         btnStartAndPause.apply {
@@ -164,16 +163,15 @@ class TimerActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun initObserves() {
-        viewModel.apply {
-            actualTimeLiveData.observe(timerActivity) { actualTime ->
-                tvDisplayTimer.text = actualTime
-            }
-            actualRoundLiveData.observe(timerActivity) { actualRound ->
-                tvActualRound.text = actualRound.second
-                tvActualExercise.text = exercises?.get(actualRound.first - 1)?.description.orEmpty()
-                if (training != null && actualRound.first < totalRounds!!) {
-                    recyclerView.scrollToPosition(actualRound.first)
-                }
+        viewModel.actualTimeLiveData.observe(timerActivity) { actualTime ->
+            tvDisplayTimer.text = actualTime
+        }
+
+        viewModel.actualRoundLiveData.observe(timerActivity) { actualRound ->
+            tvActualRound.text = actualRound.second
+            tvActualExercise.text = exercises?.get(actualRound.first - 1)?.description.orEmpty()
+            if (training != null && actualRound.first < totalRounds!!) {
+                recyclerView.scrollToPosition(actualRound.first)
             }
         }
     }

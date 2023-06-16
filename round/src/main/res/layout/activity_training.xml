@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:clickable="true"
+        app:backgroundTint="#1565C0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_input_add" />
@@ -47,19 +47,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageView
         android:id="@+id/btnStartTraining"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:pointerIcon="arrow"
-        android:text="GO"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@id/rvAllRoundsAtTraining"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="10dp"
+        android:src="@android:drawable/ic_menu_set_as"
+        app:layout_constraintBottom_toBottomOf="@id/etTrainingTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/etTrainingTitle"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/etTrainingTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAllRoundsAtTraining"

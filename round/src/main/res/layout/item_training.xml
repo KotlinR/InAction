@@ -4,8 +4,7 @@
     android:id="@+id/clWorkoutTitle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:background="@color/gray_blue">
+    android:layout_margin="10dp">
 
     <TextView
         android:id="@+id/tvWorkoutTitle"

@@ -14,8 +14,13 @@ class TimerViewModel(
     val timerParameters: TimerParameters get() = timer.timerParameters
     private val originTimeParameters: TimerParameters = timer.originTimeParameters
 
-    fun setTraining(totalRounds: Int?) {
-        timer.setTrainingParameters(totalRounds = totalRounds)
+    fun setTraining(
+        totalRounds: Int?,
+        onResultTotalRounds: (Int) -> Unit,
+    ) {
+        timer.setTrainingParameters(totalRounds = totalRounds) { resultTotalRounds ->
+            onResultTotalRounds(resultTotalRounds)
+        }
     }
 
     fun startTraining() {
