@@ -12,6 +12,12 @@
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     tools:ignore="MissingConstraints">
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupingToDisable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="tvRoundMin,tvRoundSec, tvRelaxMin, tvRelaxSec, tvCountdown_0, tvCountdown_15, tvCountdown_15, tvCountdown_30, tvCountdown_60" />
+
     <TextView
         android:id="@+id/tvTimerParameters"
         android:layout_width="match_parent"
@@ -328,9 +334,9 @@
         app:layout_constraintTop_toTopOf="@+id/tvPreStop" />
 
     <Button
+        android:id="@+id/btnApply"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnApply"
         android:layout_marginHorizontal="5dp"
         android:text="@string/apply"
         android:textSize="32sp"

@@ -50,14 +50,10 @@ class TimerViewModel(
         timer.resetToStart(totalRounds = totalRounds ?: timer.timerParameters.totalRounds)
     }
 
-    fun resetTimerParameters(timerParameters: TimerParameters) {
+    fun resetTimerParameters(timerParameters: TimerParameters, totalRounds: Int?) {
         timer.resetTimeParameters(
-            countdown = timerParameters.countdown,
-            round = timerParameters.round,
-            relax = timerParameters.relax,
-            preStart = timerParameters.preStart,
-            preStop = timerParameters.preStop,
-            totalRounds = timerParameters.totalRounds,
+            newTP = timerParameters,
+            totalRounds = totalRounds,
         )
     }
 

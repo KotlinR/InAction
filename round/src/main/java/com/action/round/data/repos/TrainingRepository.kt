@@ -51,7 +51,7 @@ class TrainingRepository(
     }
 
     private fun getConvertedTrainings(): List<Training> {
-        return trainingDao.getAll().map { trainingEntity ->
+        return trainingDao.getAllTrainings().map { trainingEntity ->
             trainingConverter.convert(trainingEntity)
         }
     }

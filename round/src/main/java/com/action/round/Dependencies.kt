@@ -33,7 +33,10 @@ class Dependencies(private val context: Context) {
     val mainViewModelFactory: ViewModelProvider.Factory
         get() = viewModelFactory {
             initializer {
-                MainViewModel(trainingRepository = trainingRepository)
+                MainViewModel(
+                    trainingRepository = trainingRepository,
+                    es = Executors.newSingleThreadExecutor(),
+                )
             }
         }
 
@@ -83,7 +86,8 @@ class Dependencies(private val context: Context) {
     private val timer: Timer
         get() = Timer(
             es = Executors.newCachedThreadPool(),
-            timerParametersRepository = timerParametersRepository
+            timerParametersRepository = timerParametersRepository,
+            context = context,
         )
 
     private val timerParametersRepository: TimerParametersRepository

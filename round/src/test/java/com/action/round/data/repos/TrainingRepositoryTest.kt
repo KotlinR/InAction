@@ -49,7 +49,7 @@ class TrainingRepositoryTest {
         on { convert(entities[1]) } doReturn (trainings[1])
     }
     private val mockTrainingDao: TrainingDao = mock {
-        on { getAll() } doReturn (entities)
+        on { getAllTrainings() } doReturn (entities)
     }
     private val mockExecutorService: ExecutorService = mock {
         on { execute(any()) } doAnswer {
@@ -74,7 +74,7 @@ class TrainingRepositoryTest {
             actualTrainings = it
         }
         sut.getAll(onTrainingsLoaded)
-        verify(mockTrainingDao).getAll()
+        verify(mockTrainingDao).getAllTrainings()
         Assert.assertEquals(trainings, actualTrainings)
     }
 

@@ -25,7 +25,6 @@ class TimerActivity : AppCompatActivity() {
 
         private const val KEY_TRAINING = "training"
         private const val BACK_PRESS_TIME_MS = 2000L
-        private const val START_MESSAGE = "Start you training!"
 
         fun buildIntent(activity: ComponentActivity, training: Training?): Intent {
             return Intent(activity, TimerActivity::class.java).putExtra(KEY_TRAINING, training)
@@ -47,23 +46,12 @@ class TimerActivity : AppCompatActivity() {
         dependencies.timerViewModelFactory
     }
 
-    private val bottomSheet by lazy {
-        TimerParametersBottomSheet(
-            timerParameters = viewModel.timerParameters,
-            totalRounds = totalRounds,
-            onResetTimerParameters = { newTimerParameters -> viewModel.resetTimerParameters(newTimerParameters) },
-            onRefreshTotalRounds = { newTotalRounds -> tvRoundsInTimer.text = newTotalRounds.toString() },
-        )
-    }
-
     private val gray = Color.DKGRAY
     private val timerActivity = this
-
     private var adapter: TrainingRecycleAdapter? = null
     private var training: Training? = null
     private var totalRounds: Int? = null
     private var exercises: List<Exercise>? = null
-
     private var backPressed = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +70,7 @@ class TimerActivity : AppCompatActivity() {
         exercises = training?.exercises
         totalRounds = exercises?.size
         tvTrainingTitleInTimer.text = training?.title ?: "TIMER"
-        tvActualRound.text = START_MESSAGE
+//        tvActualRound.text = "ROUND 1"
         tvActualExercise.text = exercises?.get(0)?.description.orEmpty()
 
         viewModel.setTraining(
@@ -116,8 +104,19 @@ class TimerActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         btnSettingTimer.setOnClickListener {
-            bottomSheet.show(supportFragmentManager, TimerParametersBottomSheet.TAG)
-            // TODO (вариант открытия при запущенном таймере)
+            TimerParametersBottomSheet(
+                trainingStatus = viewModel.trainingStatus,
+                timerParameters = viewModel.timerParameters,
+                totalRounds = totalRounds,
+                onResetTimerParameters = { newTimerParameters ->
+                    viewModel.resetTimerParameters(
+                        newTimerParameters,
+                        totalRounds
+                    )
+                },
+                onRefreshTotalRounds = { newTotalRounds -> tvRoundsInTimer.text = newTotalRounds.toString() },
+            )
+                .show(supportFragmentManager, TimerParametersBottomSheet.TAG)
         }
 
         btnStartAndPause.apply {
@@ -127,7 +126,6 @@ class TimerActivity : AppCompatActivity() {
                     btnStartAndPause.setImageResource(android.R.drawable.ic_media_pause)
                     btnNext.makeMuted()
                     btnBack.makeMuted()
-                    btnSettingTimer.makeMuted()
                 } else {
                     toast { "Hold long to stop" }
                 }
@@ -138,7 +136,6 @@ class TimerActivity : AppCompatActivity() {
                     btnStartAndPause.setImageResource(android.R.drawable.ic_media_play)
                     btnNext.makeActive()
                     btnBack.makeActive()
-                    btnSettingTimer.makeActive()
                     toast { "Training paused" }
                 }
                 true

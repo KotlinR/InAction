@@ -8,11 +8,7 @@ import androidx.room.Query
 interface TrainingDao {
 
     @Query("SELECT * FROM trainings")
-    fun getAll(): List<TrainingEntity>
-
-//    fun getAllSortedASC() : List<TrainingEntity>
-//
-//    fun getAllSortedByDate() : List<TrainingEntity>
+    fun getAllTrainings(): List<TrainingEntity>
 
     @Insert
     fun insert(training: TrainingEntity)
