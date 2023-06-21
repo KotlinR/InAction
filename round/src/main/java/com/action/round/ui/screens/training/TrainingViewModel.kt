@@ -65,7 +65,7 @@ class TrainingViewModel(
         }
     }
 
-    fun openTimerScreen() {
-        _openSecondScreenLiveData.value = exercisesLiveData.value
+    fun openTimerScreen(currentExercise: List<Exercise>) {
+        _openSecondScreenLiveData.value = currentExercise
     }
 }

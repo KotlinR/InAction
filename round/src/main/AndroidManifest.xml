@@ -4,9 +4,9 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:label="Round Master"
         android:supportsRtl="true"
+        android:icon="@mipmap/ic_pro_timer_icon"
         android:theme="@style/Theme.InAction">
         <activity
             android:name=".ui.screens.timer.TimerActivity"

@@ -24,7 +24,7 @@ class TrainingRecycleAdapter(
 ) : RecyclerView.Adapter<TrainingRecycleAdapter.RoundViewHolder>(),
     ItemTouchHelperAdapter {
 
-    private var currentList = mutableListOf<Exercise>()
+    private var _currentList = mutableListOf<Exercise>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoundViewHolder {
         return RoundViewHolder(
@@ -32,11 +32,11 @@ class TrainingRecycleAdapter(
                 .from(parent.context)
                 .inflate(R.layout.item_round, parent, false),
             onExerciseChange = { id, newDescription ->
-                currentList.findAndUpdate(
+                _currentList.findAndUpdate(
                     predicate = { it.id == id },
                     modify = { it.copy(description = newDescription) },
                 )
-                Log.d("!!!", "$currentList")
+                Log.d("!!!", "$_currentList")
                 onExerciseChange?.invoke(id, newDescription)
             },
             onLongClick = { round ->
@@ -46,10 +46,10 @@ class TrainingRecycleAdapter(
     }
 
     override fun onBindViewHolder(holder: RoundViewHolder, position: Int) {
-        holder.onBind(currentList[position], position)
+        holder.onBind(_currentList[position], position)
     }
 
-    override fun getItemCount(): Int = currentList.size
+    override fun getItemCount(): Int = _currentList.size
 
     override fun onViewRecycled(holder: RoundViewHolder) {
         super.onViewRecycled(holder)
@@ -58,13 +58,13 @@ class TrainingRecycleAdapter(
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         onMove?.invoke(fromPosition, toPosition)
-        currentList.swap(fromPosition, toPosition)
+        _currentList.swap(fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
     override fun onItemDismiss(position: Int) {
         onSwipe?.invoke(position)
-        currentList.removeAt(position)
+        _currentList.removeAt(position)
         notifyItemRemoved(position)
     }
 
@@ -74,9 +74,11 @@ class TrainingRecycleAdapter(
     }
 
     fun submitList(newList: List<Exercise>) {
-        currentList = newList.toMutableList()
+        _currentList = newList.toMutableList()
         onListUpdate()
     }
+
+    fun getList(): List<Exercise> = _currentList.toList()
 
     inner class RoundViewHolder(
         itemView: View,

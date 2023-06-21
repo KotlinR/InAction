@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
@@ -19,6 +20,7 @@ import com.action.round.ui.screens.timer.TimerActivity
 import com.action.round.utills.hideKeyboard
 import com.action.round.utills.toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.time.LocalDate
 
 class TrainingActivity : ComponentActivity() {
 
@@ -94,7 +96,8 @@ class TrainingActivity : ComponentActivity() {
         }
 
         btnStartTraining.setOnClickListener {
-            viewModel.openTimerScreen()
+            rootView.hideKeyboard()
+            adapter?.getList()?.let { currentList -> viewModel.openTimerScreen(currentList) }
         }
 
         rootView.setOnClickListener(View::hideKeyboard)
@@ -148,7 +151,12 @@ class TrainingActivity : ComponentActivity() {
                     } else {
                         if (backPressed + BACK_PRESS_TIME_MS > System.currentTimeMillis()) {
                             isEnabled = false
-                            saveOrUpdateTraining()
+                            if (recyclerView.isNotEmpty()) {
+                                if (tvTrainingTitle.text.isEmpty()) {
+                                    tvTrainingTitle.text = LocalDate.now().toString()
+                                }
+                                saveOrUpdateTraining()
+                            }
                             onBackPressedDispatcher.onBackPressed()
                         } else {
                             toast { "Press once again to exit!" }

@@ -70,7 +70,6 @@ class TimerActivity : AppCompatActivity() {
         exercises = training?.exercises
         totalRounds = exercises?.size
         tvTrainingTitleInTimer.text = training?.title ?: "TIMER"
-//        tvActualRound.text = "ROUND 1"
         tvActualExercise.text = exercises?.get(0)?.description.orEmpty()
 
         viewModel.setTraining(
