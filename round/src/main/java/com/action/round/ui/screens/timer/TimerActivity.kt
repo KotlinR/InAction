@@ -68,7 +68,9 @@ class TimerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        NotificationTimer(this).showNotification("!!!TRAINING IN PROGRESS!!!")
+        if (viewModel.trainingStatus) {
+            NotificationTimer(this).showNotification("!!!TRAINING IN PROGRESS!!!")
+        }
     }
 
     private fun setUpTraining() {
