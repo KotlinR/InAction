@@ -9,13 +9,6 @@
         android:icon="@mipmap/ic_pro_timer_icon"
         android:theme="@style/Theme.InAction">
         <activity
-            android:name=".ui.screens.timer.TimerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.screens.training.TrainingActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".ui.screens.main.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -24,6 +17,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.screens.training.TrainingActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.screens.timer.TimerActivity"
+            android:exported="false"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

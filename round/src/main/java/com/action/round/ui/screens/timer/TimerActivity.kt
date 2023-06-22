@@ -16,6 +16,7 @@ import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
 import com.action.round.data.models.Exercise
 import com.action.round.data.models.Training
+import com.action.round.ui.notification.NotificationTimer
 import com.action.round.ui.screens.training.TrainingRecycleAdapter
 import com.action.round.utills.toast
 
@@ -63,6 +64,11 @@ class TimerActivity : AppCompatActivity() {
         initUI()
         initObserves()
         setUpBackPress()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        NotificationTimer(this).showNotification("!!!TRAINING IN PROGRESS!!!")
     }
 
     private fun setUpTraining() {
