@@ -85,7 +85,7 @@ class MainViewModel(
 
     private fun List<Training>.sorted(): List<Training> {
         return when (sortBy) {
-            SortBy.NAME -> this.sortedBy { it.title }
+            SortBy.NAME -> this.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
             SortBy.SIZE -> this.sortedByDescending { it.exercises.size }
         }
     }
