@@ -94,12 +94,14 @@ class TrainingRecycleAdapter(
             itemView.setBackgroundColor(Color.TRANSPARENT)
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         fun onBind(exercise: Exercise, position: Int) {
             itemView.apply {
                 onFocusChangeListener
                 val text = "Round [ ${adapterPosition + 1} ]"
                 findViewById<TextView>(R.id.tvRoundOfTraining).text = text
                 if (this@TrainingRecycleAdapter.onLongClick != null) {
+                    setBackgroundResource(R.drawable.selector)
                     findViewById<EditText>(R.id.etExerciseOfTraining).apply {
                         setText(exercise.description)
                         isEnabled = false
