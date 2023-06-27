@@ -109,7 +109,7 @@ class Timer(
                         }
                     }
                     totalRelax -> {
-                        if (currentTime != timerParameters.relax) {
+                        if (currentTime != timerParameters.relax && totalRounds != 0) {
                             _currentTime = timerParameters.relax
                             _actualRoundLiveData.postValue(Pair(currentRounds, "NEXT ROUND $currentRounds"))
                         } else {
