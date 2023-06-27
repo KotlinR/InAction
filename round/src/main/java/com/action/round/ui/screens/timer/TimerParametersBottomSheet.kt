@@ -197,6 +197,7 @@ class TimerParametersBottomSheet(
         }
         //Click button Apply
         btnApply.setOnClickListener {
+            viewBS.hideKeyboard()
             onResetTimerParameters(resetTimersParameters)
             onRefreshTotalRounds(resetTimersParameters.totalRounds)
             dismiss()

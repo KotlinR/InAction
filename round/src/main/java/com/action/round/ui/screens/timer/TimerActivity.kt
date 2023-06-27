@@ -159,9 +159,11 @@ class TimerActivity : AppCompatActivity() {
         btnBack.apply {
             setOnClickListener {
                 if (!viewModel.trainingStatus) viewModel.back(totalRounds = totalRounds)
+                btnStartAndPause.setImageResource(android.R.drawable.ic_media_play)
             }
             setOnLongClickListener {
                 if (!viewModel.trainingStatus) viewModel.resetToStart(totalRounds = totalRounds)
+                btnStartAndPause.setImageResource(android.R.drawable.ic_media_play)
                 toast { "Training from the beginning" }
                 true
             }
@@ -180,9 +182,13 @@ class TimerActivity : AppCompatActivity() {
 
         viewModel.actualRoundLiveData.observe(timerActivity) { actualRound ->
             tvActualRound.text = actualRound.second
-            tvActualExercise.text = exercises?.get(actualRound.first - 1)?.description.orEmpty()
-            if (training != null && actualRound.first < totalRounds!!) {
+            if (training != null && actualRound.first < totalRounds!! && actualRound.first != 0) {
+                tvActualExercise.text = exercises?.get(actualRound.first - 1)?.description.orEmpty()
                 recyclerView.scrollToPosition(actualRound.first)
+            }
+            if (actualRound.first == 0) {
+                tvActualExercise.text = "Long press backed to resume training"
+                btnBack.makeActive()
             }
         }
     }

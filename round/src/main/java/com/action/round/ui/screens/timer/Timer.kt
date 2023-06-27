@@ -206,6 +206,7 @@ class Timer(
             }
             while (trainingStatus && totalRounds > 0) {
                 if (totalRounds > totalRelax) {
+                    Log.d("!!!", "Round:$totalRounds Relax:$totalRelax")
                     _actualRoundLiveData.postValue(Pair(currentRounds, "ROUND $currentRounds"))
                     val timeRound = if (currentTime == 0) timerParameters.round else _currentTime
                     timer(setTime = timeRound, isRound = true)
@@ -213,8 +214,9 @@ class Timer(
                         _totalRounds--
                         _currentRounds++
                     }
+                    Log.d("!!!", "Round:$totalRounds Relax:$totalRelax")
                 }
-                if (totalRounds == totalRelax) {
+                if (totalRounds == totalRelax && totalRelax != 0) {
                     _actualRoundLiveData.postValue(Pair(currentRounds, "NEXT ROUND $currentRounds"))
                     val timeRelax = if (currentTime == 0) timerParameters.relax else _currentTime
                     timer(setTime = timeRelax, isRound = false)
@@ -222,6 +224,11 @@ class Timer(
                         _totalRelax--
                     }
                 }
+            }
+            if (trainingStatus && totalRounds == 0 && totalRelax == 0) {
+                pauseTraining()
+                _actualRoundLiveData.postValue(Pair(0, "TRAINING COMPLETED"))
+                _actualTimeLiveData.postValue("00:00")
             }
         }
     }
