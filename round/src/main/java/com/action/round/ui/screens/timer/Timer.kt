@@ -46,10 +46,13 @@ class Timer(
     private val _timerParameters by lazy { TimerParameters() }
     val timerParameters get() = _timerParameters
 
+    private var mediaPlayer: MediaPlayer? = null
+
     fun pauseTraining() {
         es.execute {
             _trainingStatus = false
         }
+        mediaPlayer?.release() // todo: find a better place for resource releasing
     }
 
     fun next() {
@@ -245,19 +248,19 @@ class Timer(
             _actualTimeLiveData.postValue("$min:$sec")
 
             if (currentTime == timerParameters.round && isRound) {
-                MediaPlayer.create(context, R.raw.gong_start).start()
+                mediaPlayer = MediaPlayer.create(context, R.raw.gong_start).apply { start() }
             }
 
             if (currentTime == 1 && isRound) {
-                MediaPlayer.create(context, R.raw.gong_stop).start()
+                mediaPlayer = MediaPlayer.create(context, R.raw.gong_stop).apply { start() }
             }
 
             if (timerParameters.preStop > 0 && counterMin == 0 && counterSec == timerParameters.preStop) {
-                MediaPlayer.create(context, R.raw.pre).start()
+                mediaPlayer = MediaPlayer.create(context, R.raw.pre).apply { start() }
             }
 
             if (timerParameters.preStart > 0 && counterMin == 0 && counterSec == timerParameters.preStart) {
-                MediaPlayer.create(context, R.raw.pre).start()
+                mediaPlayer = MediaPlayer.create(context, R.raw.pre).apply { start() }
             }
 
             if (counterSec == 0) {
@@ -268,30 +271,6 @@ class Timer(
             _currentTime--
             counterSec--
             Thread.sleep(1000)
-        }
-    }
-
-    private fun stopwatch(time: Int) {
-        es.execute {
-            var counterSec = 0
-            var counterMin = 0
-            var sec = "00"
-            var min = "00"
-            (0..time).forEach {
-                Thread.sleep(1000)
-
-                sec = if (counterSec < 10) "0$counterSec" else "$counterSec"
-                min = if (counterMin < 10) "0$counterMin" else "$counterMin"
-
-                if (counterSec == 60) {
-                    counterSec = 0
-                    counterMin++
-                    sec = "00"
-                }
-                counterSec++
-
-                _actualTimeLiveData.postValue("${min}:${sec}")
-            }
         }
     }
 

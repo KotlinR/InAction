@@ -23,7 +23,7 @@ class MainViewModel(
     val openSecondScreenTimerActivityLiveData: LiveData<Unit?> = _openSecondScreenTimerActivityLiveData
 
     private val originTrainings by lazy { mutableListOf<Training>() }
-    private var sortBy = SortBy.NAME
+    private var sortBy = SortBy.NAME_ASC
 
     init {
         getAllTrainings()
@@ -39,13 +39,12 @@ class MainViewModel(
         es.execute {
             trainingsLiveData.value?.let { trainings ->
                 when (sortBy) {
-                    SortBy.NAME -> {
-                        sortBy = SortBy.SIZE
+                    SortBy.NAME_ASC -> {
+                        sortBy = SortBy.NUMBER_OF_ROUNDS
                         _trainingsLiveData.postValue(trainings.sorted())
                     }
-                    SortBy.SIZE -> {
-
-                        sortBy = SortBy.NAME
+                    SortBy.NUMBER_OF_ROUNDS -> {
+                        sortBy = SortBy.NAME_ASC
                         _trainingsLiveData.postValue(trainings.sorted())
                     }
                 }
@@ -85,8 +84,8 @@ class MainViewModel(
 
     private fun List<Training>.sorted(): List<Training> {
         return when (sortBy) {
-            SortBy.NAME -> this.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
-            SortBy.SIZE -> this.sortedByDescending { it.exercises.size }
+            SortBy.NAME_ASC -> sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+            SortBy.NUMBER_OF_ROUNDS -> sortedByDescending { it.exercises.size }
         }
     }
 }

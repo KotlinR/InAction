@@ -14,6 +14,7 @@ import com.action.round.data.models.TimerParameters
 import com.action.round.utills.hideKeyboard
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
+// todo: create TimerParametersViewModel and move as much logic as you can inside it
 class TimerParametersBottomSheet(
     private val trainingStatus: Boolean,
     private val timerParameters: TimerParameters,
@@ -39,7 +40,7 @@ class TimerParametersBottomSheet(
             relax = timerParameters.relax,
             preStart = timerParameters.preStart,
             preStop = timerParameters.preStop,
-            totalRounds = timerParameters.totalRounds
+            totalRounds = timerParameters.totalRounds,
         )
     }
 
@@ -63,14 +64,14 @@ class TimerParametersBottomSheet(
         val timeRound = setTime(timerParameters.round)
         tvRoundMin = viewBS.createdEditTextView(R.id.tvRoundMin, timeRound.first)
         tvRoundSec = viewBS.createdEditTextView(R.id.tvRoundSec, timeRound.second)
-        tvRoundMin?.mutableButton()
-        tvRoundSec?.mutableButton()
+        tvRoundMin?.disableButton()
+        tvRoundSec?.disableButton()
         //Relax
         val timeRelax = setTime(timerParameters.relax)
         tvRelaxMin = viewBS.createdEditTextView(R.id.tvRelaxMin, timeRelax.first)
         tvRelaxSec = viewBS.createdEditTextView(R.id.tvRelaxSec, timeRelax.second)
-        tvRelaxMin?.mutableButton()
-        tvRelaxSec?.mutableButton()
+        tvRelaxMin?.disableButton()
+        tvRelaxSec?.disableButton()
         //PreStart
         val tvPreStartOff = viewBS.findViewById<TextView>(R.id.tvPreStart_0)
         val tvPreStart10 = viewBS.findViewById<TextView>(R.id.tvPreStart_10)
@@ -120,10 +121,10 @@ class TimerParametersBottomSheet(
             tvCountdown30.setTextColor(originalWhite)
             tvCountdown60.setTextColor(Color.GREEN)
         }
-        tvCountdownOff.mutableButton()
-        tvCountdown15.mutableButton()
-        tvCountdown30.mutableButton()
-        tvCountdown60.mutableButton()
+        tvCountdownOff.disableButton()
+        tvCountdown15.disableButton()
+        tvCountdown30.disableButton()
+        tvCountdown60.disableButton()
         //Pre START
         when (timerParameters.preStart) {
             0 -> tvPreStartOff.setTextColor(Color.GREEN)
@@ -262,7 +263,7 @@ class TimerParametersBottomSheet(
         if (totalRounds == null) tvTotalRoundsField?.setText(timerParameters.totalRounds.toString())
     }
 
-    private fun View.mutableButton() {
+    private fun View.disableButton() {
         if (trainingStatus) {
             isActivated = false
             isEnabled = false

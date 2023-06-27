@@ -1,6 +1,5 @@
 package com.action.round.ui.notification
 
-import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -11,17 +10,14 @@ import com.action.round.ui.screens.timer.TimerActivity
 
 class NotificationTimer(
     private val context: Context,
+    private val notificationManager: NotificationManager,
 ) {
-
-    private val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     companion object {
         const val TIMER_CHANNEL_ID = "timer_channel"
     }
 
-    @SuppressLint("NotificationPermission")
-    fun showNotification(liveData: String) {
+    fun showNotification(liveData: String) { // todo: add runtime permission POST_NOTIFICATIONS
         val activityIntent = Intent(context, TimerActivity::class.java)
         val activityPendingIntent = PendingIntent.getActivity(
             context,
@@ -30,7 +26,7 @@ class NotificationTimer(
             PendingIntent.FLAG_IMMUTABLE,
         )
         val notification = NotificationCompat.Builder(context, TIMER_CHANNEL_ID)
-            .setSmallIcon(R.drawable.timer_icon)
+            .setSmallIcon(R.drawable.ic_timer)
             .setContentTitle("Round master")
             .setContentText(liveData)
             .setContentIntent(activityPendingIntent)

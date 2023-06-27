@@ -74,13 +74,12 @@ class TrainingActivity : ComponentActivity() {
             onSwipe = { id -> viewModel.deleteExercise(id) },
             onMove = { from, to -> viewModel.moveExercise(from, to) },
             onExerciseChange = { id, text -> viewModel.updateExerciseById(id, text) },
-            onLongClick = null,
         ).also {
             ItemTouchHelper(SimpleItemTouchHelperCallback(
                 adapter = it,
                 movePermit = true,
                 context = this,
-                hideKeyboard = { itemView -> itemView.hideKeyboard() }
+                hideKeyboard = { itemView -> itemView.hideKeyboard() },
             )
             ).attachToRecyclerView(recyclerView)
             recyclerView.adapter = it

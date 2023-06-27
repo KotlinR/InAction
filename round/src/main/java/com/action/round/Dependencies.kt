@@ -1,5 +1,6 @@
 package com.action.round
 
+import android.app.NotificationManager
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
@@ -13,6 +14,7 @@ import com.action.round.data.db.TrainingDao
 import com.action.round.data.repos.LocalExercisesRepository
 import com.action.round.data.repos.TimerParametersRepository
 import com.action.round.data.repos.TrainingRepository
+import com.action.round.ui.notification.NotificationTimer
 import com.action.round.ui.screens.main.MainViewModel
 import com.action.round.ui.screens.timer.Timer
 import com.action.round.ui.screens.timer.TimerViewModel
@@ -29,6 +31,15 @@ class Dependencies(private val context: Context) {
 
         private const val DATABASE_NAME = "database.db"
     }
+
+    val notificationTimer: NotificationTimer by lazy {
+        NotificationTimer(
+            context,
+            notificationManager,
+        )
+    }
+
+    val notificationManager by lazy { context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     val mainViewModelFactory: ViewModelProvider.Factory
         get() = viewModelFactory {

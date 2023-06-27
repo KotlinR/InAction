@@ -17,10 +17,10 @@ import com.action.round.utills.findAndUpdate
 import com.action.round.utills.swap
 
 class TrainingRecycleAdapter(
-    private val onSwipe: ((position: Int) -> Unit)?,
-    private val onMove: ((from: Int, to: Int) -> Unit)?,
-    private val onExerciseChange: ((id: Int, newText: String) -> Unit)?,
-    private val onLongClick: ((round: Int) -> Unit)?,
+    private val onSwipe: ((position: Int) -> Unit)? = null,
+    private val onMove: ((from: Int, to: Int) -> Unit)? = null,
+    private val onExerciseChange: ((id: Int, newText: String) -> Unit)? = null,
+    private val onLongClick: ((round: Int) -> Unit)? = null,
 ) : RecyclerView.Adapter<TrainingRecycleAdapter.RoundViewHolder>(),
     ItemTouchHelperAdapter {
 
@@ -39,9 +39,7 @@ class TrainingRecycleAdapter(
                 Log.d("!!!", "$_currentList")
                 onExerciseChange?.invoke(id, newDescription)
             },
-            onLongClick = { round ->
-                onLongClick?.invoke(round)
-            }
+            onLongClick = onLongClick,
         )
     }
 
@@ -80,11 +78,19 @@ class TrainingRecycleAdapter(
 
     fun getList(): List<Exercise> = _currentList.toList()
 
-    inner class RoundViewHolder(
+    class RoundViewHolder(
         itemView: View,
-        private val onExerciseChange: ((id: Int, newText: String) -> Unit)?,
-        private val onLongClick: ((round: Int) -> Unit)?,
+        private val onExerciseChange: ((id: Int, newText: String) -> Unit)? = null,
+        private val onLongClick: ((round: Int) -> Unit)? = null,
     ) : RecyclerView.ViewHolder(itemView), ItemTouchHelperViewHolder {
+
+        private val tvRound: TextView? by lazy {
+            itemView.findViewById(R.id.tvRoundOfTraining)
+        }
+
+        private val etRound: EditText? by lazy {
+            itemView.findViewById(R.id.etExerciseOfTraining)
+        }
 
         override fun onItemSelected() {
             itemView.setBackgroundColor(Color.DKGRAY)
@@ -94,29 +100,26 @@ class TrainingRecycleAdapter(
             itemView.setBackgroundColor(Color.TRANSPARENT)
         }
 
-        @SuppressLint("ClickableViewAccessibility")
         fun onBind(exercise: Exercise, position: Int) {
             itemView.apply {
-                onFocusChangeListener
                 val text = "Round [ ${adapterPosition + 1} ]"
-                findViewById<TextView>(R.id.tvRoundOfTraining).text = text
-                if (this@TrainingRecycleAdapter.onLongClick != null) {
-                    setBackgroundResource(R.drawable.selector)
-                    findViewById<EditText>(R.id.etExerciseOfTraining).apply {
+                tvRound?.text = text
+                if (onLongClick != null) {
+                    setBackgroundResource(R.drawable.bg_item_exercise)
+                    etRound?.apply {
                         setText(exercise.description)
                         isEnabled = false
                     }
                     setOnLongClickListener {
-                        onLongClick?.invoke(position + 1)
+                        onLongClick.invoke(position + 1)
                         true
                     }
                 } else {
-                    findViewById<EditText>(R.id.etExerciseOfTraining).apply {
-                        setOnFocusChangeListener { view, b ->
-                            if (view == this && !b) {
-                                val newText = itemView.findViewById<EditText>(R.id.etExerciseOfTraining).text
-                                onExerciseChange?.invoke(exercise.id, newText?.toString().orEmpty())
-                                Log.d("!!!", "$newText")
+                    etRound?.apply {
+                        setOnFocusChangeListener { view, focus ->
+                            if (view == this && !focus) {
+                                onExerciseChange?.invoke(exercise.id, text)
+                                Log.d("!!!", text)
                             }
                         }
                         setText(exercise.description)
@@ -129,6 +132,7 @@ class TrainingRecycleAdapter(
         fun onUnbind() {
             itemView.setOnClickListener(null)
             itemView.setOnLongClickListener(null)
+            etRound?.onFocusChangeListener = null
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.action.round.ui.screens.timer
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
@@ -16,7 +17,6 @@ import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
 import com.action.round.data.models.Exercise
 import com.action.round.data.models.Training
-import com.action.round.ui.notification.NotificationTimer
 import com.action.round.ui.screens.training.TrainingRecycleAdapter
 import com.action.round.utills.toast
 
@@ -60,6 +60,14 @@ class TimerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_timer)
         supportActionBar?.hide()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                123
+            ) // todo: extract result code and hande result
+            // todo: activity result API
+        }
+
         setUpTraining()
         initUI()
         initObserves()
@@ -69,7 +77,7 @@ class TimerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         if (viewModel.trainingStatus) {
-            NotificationTimer(this).showNotification("!!!TRAINING IN PROGRESS!!!")
+            dependencies.notificationTimer.showNotification("!!!TRAINING IN PROGRESS!!!")
         }
     }
 
@@ -97,14 +105,13 @@ class TimerActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun initUI() {
         adapter = TrainingRecycleAdapter(
-            onSwipe = null,
-            onMove = null,
-            onExerciseChange = null,
             onLongClick = { round ->
-                if (!viewModel.trainingStatus && training != null) viewModel.startFromThisRound(
-                    totalRounds = totalRounds,
-                    numberRound = round,
-                )
+                if (!viewModel.trainingStatus && training != null) {
+                    viewModel.startFromThisRound(
+                        totalRounds = totalRounds,
+                        numberRound = round,
+                    )
+                }
             },
         )
         adapter?.submitList(newList = exercises.orEmpty())
@@ -118,7 +125,7 @@ class TimerActivity : AppCompatActivity() {
                 onResetTimerParameters = { newTimerParameters ->
                     viewModel.resetTimerParameters(
                         newTimerParameters,
-                        totalRounds
+                        totalRounds,
                     )
                 },
                 onRefreshTotalRounds = { newTotalRounds -> tvRoundsInTimer.text = newTotalRounds.toString() },

@@ -8,7 +8,7 @@ import com.action.round.data.converters.ExercisesConverter
 
 @Database(
     entities = [TrainingEntity::class, TimerParametersEntity::class],
-    version = 1
+    version = 1,
 )
 @TypeConverters(ExercisesConverter::class)
 abstract class InActionDatabase : RoomDatabase() {
