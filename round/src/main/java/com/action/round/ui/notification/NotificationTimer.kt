@@ -32,9 +32,12 @@ class NotificationTimer(
             .setContentIntent(activityPendingIntent)
             .setOngoing(true)
             .setShowWhen(false)
-            .setAutoCancel(true)
             .build()
 
         notificationManager.notify(1, notification)
+    }
+
+    fun cancelNotification() {
+        notificationManager.cancelAll()
     }
 }

@@ -3,6 +3,7 @@ package com.action.round.ui.screens.timer
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +44,17 @@ class TimerActivity : AppCompatActivity() {
     private val btnBack by lazy { findViewById<ImageView>(R.id.btnBack) }
     private val btnNext by lazy { findViewById<ImageView>(R.id.btnNext) }
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvPreviewRounds) }
+    private val notificationPermission by lazy {
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            when {
+                granted -> dependencies.notificationTimer.showNotification("!!!TRAINING IN PROGRESS!!!")
+                else -> toast {
+                    "Permission is needed to show a notification about the status of the workout, " +
+                            "if the application is minimized"
+                }
+            }
+        }
+    }
 
     private val viewModel: TimerViewModel by viewModels {
         dependencies.timerViewModelFactory
@@ -60,25 +73,16 @@ class TimerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_timer)
         supportActionBar?.hide()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissions(
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                123
-            ) // todo: extract result code and hande result
-            // todo: activity result API
-        }
-
         setUpTraining()
         initUI()
         initObserves()
         setUpBackPress()
+        setUpPermission()
     }
 
-    override fun onPause() {
-        super.onPause()
-        if (viewModel.trainingStatus) {
-            dependencies.notificationTimer.showNotification("!!!TRAINING IN PROGRESS!!!")
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        dependencies.notificationTimer.cancelNotification()
     }
 
     private fun setUpTraining() {
@@ -140,6 +144,16 @@ class TimerActivity : AppCompatActivity() {
                     btnStartAndPause.setImageResource(android.R.drawable.ic_media_pause)
                     btnNext.makeMuted()
                     btnBack.makeMuted()
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                            dependencies.notificationTimer.showNotification("!!!TRAINING IN PROGRESS!!!")
+                        } else {
+                            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    } else {
+                        dependencies.notificationTimer.showNotification("!!!TRAINING IN PROGRESS!!!")
+                    }
                 } else {
                     toast { "Hold long to stop" }
                 }
@@ -150,6 +164,7 @@ class TimerActivity : AppCompatActivity() {
                     btnStartAndPause.setImageResource(android.R.drawable.ic_media_play)
                     btnNext.makeActive()
                     btnBack.makeActive()
+                    dependencies.notificationTimer.cancelNotification()
                     toast { "Training paused" }
                 }
                 true
@@ -189,6 +204,7 @@ class TimerActivity : AppCompatActivity() {
             if (actualRound.first == 0) {
                 tvActualExercise.text = "Long press backed to resume training"
                 btnBack.makeActive()
+                dependencies.notificationTimer.cancelNotification()
             }
         }
     }
@@ -221,5 +237,11 @@ class TimerActivity : AppCompatActivity() {
     private fun ImageView.makeActive() {
         isEnabled = true
         clearColorFilter()
+    }
+
+    private fun setUpPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 }
