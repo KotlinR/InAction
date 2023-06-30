@@ -48,15 +48,21 @@ class MainActivity : ComponentActivity() {
         setUpBackPress()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getAllTrainings()
+    }
+
     private fun initUI() {
         adapter = MainRecyclerAdapter(
             onClick = { training -> viewModel.openTrainingScreen(training) },
             onSwipe = { training -> viewModel.deleteTraining(training) }
         ).also {
-            ItemTouchHelper(SimpleItemTouchHelperCallback(
-                adapter = it,
-                movePermit = false,
-                context = this,
+            ItemTouchHelper(
+                SimpleItemTouchHelperCallback(
+                    adapter = it,
+                    movePermit = false,
+                    context = this,
                 hideKeyboard = { itemView -> itemView.hideKeyboard() }
             )).attachToRecyclerView(recyclerView)
         }
@@ -110,7 +116,8 @@ class MainActivity : ComponentActivity() {
         }
 
         viewModel.openSecondScreenTimerActivityLiveData.observe(this) {
-            startActivity(TimerActivity.buildIntent(activity = this, training = null))
+
+        startActivity(TimerActivity.buildIntent(activity = this, training = null))
         }
     }
 
@@ -133,10 +140,5 @@ class MainActivity : ComponentActivity() {
                 }
             },
         )
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        viewModel.getAllTrainings()
     }
 }

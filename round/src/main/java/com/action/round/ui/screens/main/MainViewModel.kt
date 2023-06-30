@@ -3,11 +3,13 @@ package com.action.round.ui.screens.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.action.round.analytics.Analytics
 import com.action.round.data.models.Training
 import com.action.round.data.repos.TrainingRepository
 import java.util.concurrent.ExecutorService
 
 class MainViewModel(
+    private val analytics: Analytics,
     private val trainingRepository: TrainingRepository,
     private val es: ExecutorService,
 ) : ViewModel() {
@@ -73,6 +75,7 @@ class MainViewModel(
     }
 
     fun openTimerScreen() {
+        analytics.logOpenTimer(Analytics.EVENT_PARAM_TIMER_SOURCE_MAIN)
         _openSecondScreenTimerActivityLiveData.value = null
     }
 

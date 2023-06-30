@@ -3,12 +3,14 @@ package com.action.round.ui.screens.training
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.action.round.analytics.Analytics
 import com.action.round.data.models.Exercise
 import com.action.round.data.models.Training
 import com.action.round.data.repos.LocalExercisesRepository
 import com.action.round.data.repos.TrainingRepository
 
 class TrainingViewModel(
+    private val analytics: Analytics,
     private val trainingRepository: TrainingRepository,
     private val localExercisesRepository: LocalExercisesRepository,
 ) : ViewModel() {
@@ -66,6 +68,7 @@ class TrainingViewModel(
     }
 
     fun openTimerScreen(currentExercise: List<Exercise>) {
+        analytics.logOpenTimer(Analytics.EVENT_PARAM_TIMER_SOURCE_TRAINING)
         _openSecondScreenLiveData.value = currentExercise
     }
 }

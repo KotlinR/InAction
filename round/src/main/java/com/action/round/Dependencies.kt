@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.room.Room
+import com.action.round.analytics.Analytics
 import com.action.round.data.converters.TimerParametersConverter
 import com.action.round.data.converters.TrainingConverter
 import com.action.round.data.db.InActionDatabase
@@ -19,6 +20,9 @@ import com.action.round.ui.screens.main.MainViewModel
 import com.action.round.ui.screens.timer.Timer
 import com.action.round.ui.screens.timer.TimerViewModel
 import com.action.round.ui.screens.training.TrainingViewModel
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import java.util.concurrent.Executors
 
 class Dependencies(private val context: Context) {
@@ -45,6 +49,7 @@ class Dependencies(private val context: Context) {
         get() = viewModelFactory {
             initializer {
                 MainViewModel(
+                    analytics = analytics,
                     trainingRepository = trainingRepository,
                     es = Executors.newSingleThreadExecutor(),
                 )
@@ -55,6 +60,7 @@ class Dependencies(private val context: Context) {
         get() = viewModelFactory {
             initializer {
                 TrainingViewModel(
+                    analytics = analytics,
                     trainingRepository = trainingRepository,
                     localExercisesRepository = localExercisesRepository,
                 )
@@ -69,6 +75,11 @@ class Dependencies(private val context: Context) {
                 )
             }
         }
+
+    val analytics: Analytics
+        get() = Analytics(
+            firebaseAnalytics = firebaseAnalytics,
+        )
 
     private val db: InActionDatabase = Room.databaseBuilder(
         context = context,
@@ -113,4 +124,7 @@ class Dependencies(private val context: Context) {
 
     private val timerParametersDao: TimerParametersDao
         get() = db.timerParametersDao()
+
+    private val firebaseAnalytics: FirebaseAnalytics
+        get() = Firebase.analytics
 }

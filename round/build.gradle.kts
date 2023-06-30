@@ -62,4 +62,8 @@ dependencies {
     // ActivityResultAPI
     implementation("androidx.activity:activity-ktx:1.3.0-alpha02")
     implementation("androidx.fragment:fragment-ktx:1.3.0")
+
+    // FirebaseAnalytics
+    implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }

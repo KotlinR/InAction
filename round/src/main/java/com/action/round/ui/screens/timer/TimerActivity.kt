@@ -185,7 +185,8 @@ class TimerActivity : AppCompatActivity() {
         }
 
         btnNext.setOnClickListener {
-            if (!viewModel.trainingStatus) viewModel.next()
+
+        if (!viewModel.trainingStatus) viewModel.next()
         }
     }
 
