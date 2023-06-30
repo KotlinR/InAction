@@ -46,9 +46,8 @@ class TimerActivity : AppCompatActivity() {
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.rvPreviewRounds) }
     private val notificationPermission by lazy {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            when {
-                granted -> dependencies.notificationTimer.showNotification("!!!TRAINING IN PROGRESS!!!")
-                else -> toast {
+            if (!granted) {
+                toast {
                     "Permission is needed to show a notification about the status of the workout, " +
                             "if the application is minimized"
                 }
@@ -186,7 +185,7 @@ class TimerActivity : AppCompatActivity() {
 
         btnNext.setOnClickListener {
 
-        if (!viewModel.trainingStatus) viewModel.next()
+            if (!viewModel.trainingStatus) viewModel.next()
         }
     }
 
