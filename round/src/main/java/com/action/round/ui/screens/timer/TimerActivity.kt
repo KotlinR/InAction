@@ -13,7 +13,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.action.round.Dependencies.Companion.dependencies
 import com.action.round.R
@@ -22,7 +22,7 @@ import com.action.round.data.models.Training
 import com.action.round.ui.screens.training.TrainingRecycleAdapter
 import com.action.round.utills.toast
 
-class TimerActivity : AppCompatActivity() {
+class TimerActivity : FragmentActivity() {
 
     companion object {
 
@@ -70,7 +70,6 @@ class TimerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timer)
-        supportActionBar?.hide()
 
         setUpTraining()
         initUI()
