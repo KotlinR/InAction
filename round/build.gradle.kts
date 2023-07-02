@@ -13,6 +13,15 @@ android {
     compileSdkVersion = "android-33"
     buildToolsVersion = "33.0.0"
 
+    signingConfigs {
+        create("release") {
+            keyAlias = "key666"
+            keyPassword = "666aShS"
+            storeFile = file("C:\\Users\\37529\\StudioProjects\\InAction\\keystore.jks")
+            storePassword = "1488ssHD"
+        }
+    }
+
     defaultConfig {
         applicationId = packageName
         minSdk = 30
@@ -29,6 +38,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+        }
     }
 }
 
