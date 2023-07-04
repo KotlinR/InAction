@@ -118,7 +118,7 @@ class TrainingRecycleAdapter(
                     etRound?.apply {
                         setOnFocusChangeListener { view, focus ->
                             if (view == this && !focus) {
-                                onExerciseChange?.invoke(exercise.id, text)
+                                onExerciseChange?.invoke(exercise.id, this.text.toString())
                                 Log.d("!!!", text)
                             }
                         }
